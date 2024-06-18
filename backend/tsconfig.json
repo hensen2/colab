@@ -28,6 +28,7 @@
     "noFallthroughCasesInSwitch": true,
     "allowUnreachableCode": false,
     "useUnknownInCatchVariables": true,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "types": ["vitest/globals"]
   }
 }
