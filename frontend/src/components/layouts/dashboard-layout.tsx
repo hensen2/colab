@@ -8,7 +8,8 @@ import {
 } from "../ui/sheet";
 import { Menu } from "lucide-react";
 import { socket } from "@/lib/socket";
-import Navbar from "./Navbar";
+import Navbar from "./ui/Navbar";
+import { Outlet } from "react-router-dom";
 
 export default function DashboardLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -73,25 +74,7 @@ export default function DashboardLayout() {
         </div>
 
         <main className="py-10 lg:pl-72">
-          <div className="px-4 sm:px-6 lg:px-8">
-            <div>
-              <label
-                htmlFor="notebook"
-                className="block text-sm font-medium leading-6 text-gray-900"
-              >
-                Type here...
-              </label>
-              <div className="mt-2">
-                <textarea
-                  rows={8}
-                  name="notebook"
-                  id="notebook"
-                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                  defaultValue={""}
-                />
-              </div>
-            </div>
-          </div>
+          <Outlet />
         </main>
       </div>
     </>

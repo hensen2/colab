@@ -7,14 +7,15 @@ import {
   Home,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { Link } from "react-router-dom";
 
 const navigation = [
-  { name: "Dashboard", href: "#", icon: Home, current: true },
-  { name: "Teams", href: "#", icon: Users, current: false },
-  { name: "Projects", href: "#", icon: FolderClosed, current: false },
-  { name: "Calendar", href: "#", icon: Calendar, current: false },
-  { name: "Documents", href: "#", icon: Files, current: false },
-  { name: "Protocols", href: "#", icon: FlaskConical, current: false },
+  { name: "Dashboard", href: "/", icon: Home, current: true },
+  { name: "Teams", href: "teams", icon: Users, current: false },
+  { name: "Projects", href: "projects", icon: FolderClosed, current: false },
+  { name: "Calendar", href: "calendar", icon: Calendar, current: false },
+  { name: "Documents", href: "documents", icon: Files, current: false },
+  { name: "Protocols", href: "protocols", icon: FlaskConical, current: false },
 ];
 const teams = [
   { id: 1, name: "Tempus AI", href: "#", initial: "T", current: false },
@@ -31,8 +32,8 @@ export default function Navbar() {
             <ul className="-mx-2 space-y-1">
               {navigation.map((item) => (
                 <li key={item.name}>
-                  <a
-                    href={item.href}
+                  <Link
+                    to={item.href}
                     className={cn(
                       item.current
                         ? "bg-gray-50 text-indigo-600"
@@ -51,7 +52,7 @@ export default function Navbar() {
                       strokeWidth={1.4}
                     />
                     {item.name}
-                  </a>
+                  </Link>
                 </li>
               ))}
             </ul>
@@ -63,8 +64,8 @@ export default function Navbar() {
             <ul className="-mx-2 mt-2 space-y-1">
               {teams.map((team) => (
                 <li key={team.name}>
-                  <a
-                    href={team.href}
+                  <Link
+                    to={team.href}
                     className={cn(
                       team.current
                         ? "bg-gray-50 text-indigo-600"
@@ -83,7 +84,7 @@ export default function Navbar() {
                       {team.initial}
                     </span>
                     <span className="truncate">{team.name}</span>
-                  </a>
+                  </Link>
                 </li>
               ))}
             </ul>
