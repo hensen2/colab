@@ -5,11 +5,11 @@ import {
   SheetHeader,
   SheetTitle,
   SheetTrigger,
-} from "../ui/sheet";
+} from "@/components/ui/sheet";
 import { Menu } from "lucide-react";
 import { socket } from "@/lib/socket";
-import Navbar from "./ui/Navbar";
 import { Outlet } from "react-router-dom";
+import Navbar from "@/components/ui/navbar";
 
 export default function DashboardLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
