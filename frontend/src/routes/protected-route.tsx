@@ -3,7 +3,8 @@ import { Loader2 } from "lucide-react";
 import { Outlet, Navigate } from "react-router-dom";
 
 export default function ProtectedRoute() {
-  const { isSuccess, isLoading, data } = useToken();
+  const { isSuccess, isLoading, data, error } = useToken();
+  console.log(error?.response?.status);
 
   if (isLoading) {
     return (

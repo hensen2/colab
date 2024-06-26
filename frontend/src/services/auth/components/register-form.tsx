@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-misused-promises */
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -12,24 +13,8 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { UseMutateFunction } from "@tanstack/react-query";
-
-export interface IRegisterUser {
-  firstName: string;
-  lastName: string;
-  email: string;
-  password: string;
-}
-
-export interface IUser {
-  firstName: string;
-  lastName: string;
-  email: string;
-}
-
-export interface IAuthResponse {
-  accessToken: string;
-  user: IUser;
-}
+import { AuthResponse, RegisterUser } from "@/types/api-types";
+import { useNavigate } from "react-router-dom";
 
 const formSchema = z.object({
   firstName: z.string().min(1, {
@@ -43,10 +28,12 @@ const formSchema = z.object({
 });
 
 export function RegisterForm({
-  onSubmit,
+  register,
 }: {
-  onSubmit: UseMutateFunction<IAuthResponse, Error, IRegisterUser, unknown>;
+  register: UseMutateFunction<AuthResponse, Error, RegisterUser, unknown>;
 }) {
+  const navigate = useNavigate();
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -56,6 +43,15 @@ export function RegisterForm({
       password: "",
     },
   });
+
+  function onSubmit(values: z.infer<typeof formSchema>) {
+    register(values, {
+      onSuccess: () => {
+        form.reset();
+        navigate("/", { replace: true });
+      },
+    });
+  }
 
   return (
     <Form {...form}>
