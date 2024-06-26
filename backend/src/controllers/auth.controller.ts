@@ -1,16 +1,9 @@
 import { Request, Response } from "express";
 import jwt from "jsonwebtoken";
 import catchAsync from "../utils/catchAsync";
-
-type User = {
-  username: string;
-  password: string;
-};
-
-const testUser = {
-  username: "matthew.hensen92@gmail.com",
-  password: "password",
-};
+import { UserModel } from "../models";
+import bcrypt from "bcrypt";
+import User from "../models/user.model";
 
 export const generateAccessToken = (user: User) => {
   return jwt.sign({ user }, process.env.ACCESS_JWT_SECRET!, {
@@ -29,9 +22,8 @@ export const getToken = (req: Request, res: Response) => {
 
   if (!refreshToken) {
     return res.status(401).send({
-      message: "Unauthorized",
+      message: "Unauthenticated",
       accessToken: null,
-      user: null,
     });
   }
 
@@ -41,50 +33,47 @@ export const getToken = (req: Request, res: Response) => {
     const accessToken = generateAccessToken((<any>decoded).user);
 
     return res.status(200).send({
-      message: "Successful token refresh",
+      message: "Authenticated",
       accessToken,
-      user: (<any>decoded).user.username,
     });
   } catch (error: any) {
     console.log(error?.message);
     return res.status(401).send({
-      message: "Invalid refresh token",
+      message: "Unauthenticated",
       accessToken: null,
-      user: null,
     });
   }
 };
 
-export const register = catchAsync(async (req: Request, res: Response) => {});
+export const register = catchAsync(async (req: Request, res: Response) => {
+  const { firstName, lastName, email, password } = req.body;
+  const user = await UserModel.findOne({ email });
 
-export const token = (req: Request, res: Response) => {
-  const authHeader = req.headers.authorization;
-
-  if (!authHeader) {
-    res.status(401).send({
-      loggedIn: false,
-      message: "Unauthorized",
+  if (user) {
+    return res.status(400).send({
+      message: "Email address already registered.",
+      accessToken: null,
     });
-    return;
   }
 
-  if (!authHeader.startsWith("Bearer ")) {
-    res.status(401).send({
-      loggedIn: false,
-      message: "Invalid authorization",
+  const passwordHash = await bcrypt.hash(password, 10);
+
+  const { id } = await UserModel.create({
+    firstName,
+    lastName,
+    email,
+    passwordHash,
+  });
+
+  if (!id) {
+    return res.status(400).send({
+      message: "User not created.",
+      accessToken: null,
     });
-    return;
   }
 
-  // We grab the token from the header
-  const accessToken = authHeader.split(" ")[1];
-
-  const accessTokenPayload = jwt.decode(accessToken);
-  console.log(accessTokenPayload);
-
-  console.log(req.cookies.refreshToken);
-
-  const refreshToken = generateRefreshToken(testUser);
+  const accessToken = generateAccessToken(id);
+  const refreshToken = generateRefreshToken(id);
 
   res.cookie("refreshToken", refreshToken, {
     httpOnly: true,
@@ -94,6 +83,82 @@ export const token = (req: Request, res: Response) => {
   res.status(200).json({
     accessToken,
     message: "Test user success",
-    user: testUser.username,
   });
-};
+});
+
+export const login = catchAsync(async (req: Request, res: Response) => {
+  const { email, password } = req.body;
+  const user = await UserModel.findOne({ email });
+
+  if (!user) {
+    return res.status(401).send({
+      message: "No user registered for this email address.",
+      accessToken: null,
+    });
+  }
+
+  const match = await bcrypt.compare(password, user.passwordHash);
+
+  if (!match) {
+    return res.status(401).send({
+      message: "Incorrect password.",
+      accessToken: null,
+    });
+  }
+
+  const { id } = user;
+
+  const accessToken = generateAccessToken(id);
+  const refreshToken = generateRefreshToken(id);
+
+  res.cookie("refreshToken", refreshToken, {
+    httpOnly: true,
+    path: "/",
+  });
+
+  res.status(200).json({
+    accessToken,
+    message: "Test user success",
+  });
+});
+
+// export const token = (req: Request, res: Response) => {
+//   const authHeader = req.headers.authorization;
+
+//   if (!authHeader) {
+//     res.status(401).send({
+//       loggedIn: false,
+//       message: "Unauthorized",
+//     });
+//     return;
+//   }
+
+//   if (!authHeader.startsWith("Bearer ")) {
+//     res.status(401).send({
+//       loggedIn: false,
+//       message: "Invalid authorization",
+//     });
+//     return;
+//   }
+
+//   // We grab the token from the header
+//   const accessToken = authHeader.split(" ")[1];
+
+//   const accessTokenPayload = jwt.decode(accessToken);
+//   console.log(accessTokenPayload);
+
+//   console.log(req.cookies.refreshToken);
+
+//   const refreshToken = generateRefreshToken(testUser);
+
+//   res.cookie("refreshToken", refreshToken, {
+//     httpOnly: true,
+//     path: "/",
+//   });
+
+//   res.status(200).json({
+//     accessToken,
+//     message: "Test user success",
+//     user: testUser.username,
+//   });
+// };

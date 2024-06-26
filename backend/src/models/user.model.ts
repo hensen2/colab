@@ -2,19 +2,28 @@ import { model, Schema, Types } from "mongoose";
 
 export default interface User {
   _id: Types.ObjectId;
-  name?: string;
-  email?: string;
-  password?: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  passwordHash: string;
   createdAt?: Date;
   updatedAt?: Date;
 }
 
 const userSchema = new Schema<User>(
   {
-    name: {
+    firstName: {
       type: Schema.Types.String,
       trim: true,
-      maxlength: 100,
+      maxlength: 50,
+      select: false,
+      required: true,
+    },
+    lastName: {
+      type: Schema.Types.String,
+      trim: true,
+      maxlength: 50,
+      select: false,
       required: true,
     },
     email: {
@@ -23,24 +32,14 @@ const userSchema = new Schema<User>(
       trim: true,
       required: true,
     },
-    password: {
+    passwordHash: {
       type: Schema.Types.String,
-      select: false,
-      required: true,
-    },
-    createdAt: {
-      type: Schema.Types.Date,
-      select: false,
-      required: true,
-    },
-    updatedAt: {
-      type: Schema.Types.Date,
-      select: false,
       required: true,
     },
   },
   {
     versionKey: false,
+    timestamps: true,
   },
 );
 
