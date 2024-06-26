@@ -13,11 +13,11 @@ module.exports = {
     },
     extend: {
       keyframes: {
-        "accordion-down": {
+        "accordion-up": {
           from: { height: "0" },
           to: { height: "var(--radix-accordion-content-height)" },
         },
-        "accordion-up": {
+        "accordion-down": {
           from: { height: "var(--radix-accordion-content-height)" },
           to: { height: "0" },
         },

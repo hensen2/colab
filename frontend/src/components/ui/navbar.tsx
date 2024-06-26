@@ -5,9 +5,17 @@ import {
   Users,
   FlaskConical,
   Home,
+  LogOut,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Link } from "react-router-dom";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "./accordion";
+import { useLogout } from "@/services/auth/api/useLogout";
 
 const navigation = [
   { name: "Dashboard", href: "/", icon: Home, current: true },
@@ -24,6 +32,8 @@ const teams = [
 ];
 
 export default function Navbar() {
+  const logout = useLogout();
+
   return (
     <>
       <nav className="flex flex-1 flex-col">
@@ -90,11 +100,30 @@ export default function Navbar() {
             </ul>
           </li>
           <li className="-mx-6 mt-auto">
-            <div className="flex items-center gap-x-4 px-6 py-3 text-sm font-semibold leading-6 text-gray-900 hover:bg-gray-50">
-              <span className="h-8 w-8 rounded-full bg-gray-200" />
-              <span className="sr-only">Your profile</span>
-              <span aria-hidden="true">Matt Hensen</span>
-            </div>
+            <Accordion type="single" collapsible>
+              <AccordionItem value="user">
+                <AccordionTrigger className="border-y border-gray-200 hover:bg-gray-50">
+                  <div className="flex items-center gap-x-4 px-6 py-1 text-sm font-semibold leading-6 text-gray-900">
+                    <span className="h-8 w-8 rounded-full bg-gray-200" />
+                    <span className="sr-only">Your profile</span>
+                    <span aria-hidden="true">Matt Hensen</span>
+                  </div>
+                </AccordionTrigger>
+                <AccordionContent className="flex items-center px-6">
+                  <button
+                    className="group flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 text-gray-700 hover:bg-gray-50 hover:text-indigo-600"
+                    onClick={() => logout.mutate()}
+                  >
+                    <LogOut
+                      className="h-6 w-6 shrink-0 text-gray-400 group-hover:text-indigo-600"
+                      aria-hidden="true"
+                      strokeWidth={1.4}
+                    />
+                    Log Out
+                  </button>
+                </AccordionContent>
+              </AccordionItem>
+            </Accordion>
           </li>
         </ul>
       </nav>

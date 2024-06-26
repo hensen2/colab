@@ -10,6 +10,5 @@ export function useToken() {
   return useQuery({
     queryKey: ["auth"],
     queryFn: getToken,
-    initialData: { accessToken: null, message: null },
   });
 }

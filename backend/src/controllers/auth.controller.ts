@@ -117,8 +117,26 @@ export const login = catchAsync(async (req: Request, res: Response) => {
   });
 
   res.status(200).json({
-    accessToken,
     message: "Test user success",
+    accessToken,
+  });
+});
+
+export const logout = catchAsync(async (req: Request, res: Response) => {
+  const refreshToken: string = req.cookies.refreshToken;
+
+  if (!refreshToken) {
+    return res.status(401).send({
+      message: "Unauthenticated",
+      accessToken: null,
+    });
+  }
+
+  res.clearCookie("refreshToken");
+
+  res.status(200).json({
+    message: "Logout success",
+    accessToken: null,
   });
 });
 
