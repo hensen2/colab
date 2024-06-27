@@ -1,9 +1,9 @@
 import { Request, Response } from "express";
 import jwt from "jsonwebtoken";
-import catchAsync from "../utils/catchAsync";
-import { UserModel } from "../models";
+import catchAsync from "../../utils/catchAsync";
+import { UserModel } from "../users";
 import bcrypt from "bcrypt";
-import User from "../models/user.model";
+import User from "../users/user.model";
 
 export const generateAccessToken = (user: User) => {
   return jwt.sign({ user }, process.env.ACCESS_JWT_SECRET!, {
@@ -18,14 +18,7 @@ export const generateRefreshToken = (user: User) => {
 };
 
 export const getToken = (req: Request, res: Response) => {
-  const refreshToken: string = req.cookies.refreshToken;
-
-  if (!refreshToken) {
-    return res.status(401).send({
-      message: "Unauthenticated",
-      accessToken: null,
-    });
-  }
+  const { refreshToken } = req.cookies;
 
   // verify jwt refresh token, throw exception if token isn't valid
   try {

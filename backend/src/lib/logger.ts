@@ -2,15 +2,7 @@ import winston from "winston";
 import { environment } from "./config";
 import moment from "moment-timezone";
 
-const levels = {
-  error: 0,
-  warn: 1,
-  info: 2,
-  http: 3,
-  debug: 4,
-};
-
-const logLevel = environment === "development" ? "debug" : "warn";
+const logLevel = environment === "development" ? "http" : "info";
 
 const format = winston.format.combine(
   winston.format.timestamp({ format: moment().tz("America/Chicago").format() }),
@@ -33,7 +25,6 @@ const transports = [
 ];
 
 export default winston.createLogger({
-  levels,
   level: logLevel,
   format,
   transports,

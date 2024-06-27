@@ -1,17 +1,13 @@
-import express from "express";
-import { createServer } from "http";
-import { Server } from "socket.io";
-import cookieParser from "cookie-parser";
-import cors from "cors";
-import router from "./routes";
-import mongoose from "mongoose";
-import { clientURL, cookieSecret, dbURL, port } from "./lib/config";
+import app from "./app";
+import { clientURL, port } from "./lib/config";
 import logger from "./lib/logger";
+import { Server } from "socket.io";
 
-const app = express();
-const httpServer = createServer(app);
+const server = app.listen(port, () => {
+  logger.info(`Server running at port: ${port}`);
+});
 
-const io = new Server(httpServer, {
+const io = new Server(server, {
   cors: {
     origin: clientURL,
   },
@@ -21,22 +17,24 @@ io.on("connection", (socket) => {
   logger.info(`WebSocket ID: ${socket.id}`);
 });
 
-app.use(cors({ origin: clientURL, credentials: true }));
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
-app.use(cookieParser(cookieSecret));
+const exitHandler = () => {
+  logger.info("Sigint received: shutting down server");
+  if (server) {
+    server.close(() => {
+      logger.info("Server closed");
+      process.exit(1);
+    });
+  } else {
+    process.exit(1);
+  }
+};
 
-mongoose
-  .connect(dbURL)
-  .then((_result) => {
-    logger.info("Connected to MongoDB");
-  })
-  .catch((error) => {
-    logger.error("Error connecting to MongoDB:", error.message);
-  });
+const unknownErrorHandler = (error: Error) => {
+  logger.error(error);
+  exitHandler();
+};
 
-app.use(router);
-
-httpServer.listen(port, () => {
-  logger.info(`Server running at port: ${port}`);
-});
+process.on("uncaughtException", unknownErrorHandler);
+process.on("unhandledRejection", unknownErrorHandler);
+process.on("SIGINT", exitHandler);
+process.on("SIGTERM", exitHandler);
