@@ -5,25 +5,25 @@ export class AppResponse extends Response {
   constructor(
     protected statusType: StatusType,
     protected statusCode: StatusCode,
-    protected message: string,
   ) {
     super();
 
     this.statusType = statusType;
     this.statusCode = statusCode;
-    this.message = message;
   }
 }
 
-export class TokenResponse extends AppResponse {
+export class AuthSuccessResponse extends AppResponse {
   constructor(
     private res: Response,
-    private accessToken: string,
+    private accessToken: string | null,
+    private message: string,
   ) {
-    super(StatusType.SUCCESS, StatusCode.SUCCESS, "authenticated");
+    super(StatusType.SUCCESS, StatusCode.SUCCESS);
 
     this.res = res;
     this.accessToken = accessToken;
+    this.message = message;
   }
 
   public send(): Response {
@@ -33,7 +33,4 @@ export class TokenResponse extends AppResponse {
       accessToken: this.accessToken,
     });
   }
-  //   send(res: Response, accessToken: string): Response {
-  //     return super.send(res, accessToken);
-  //   }
 }

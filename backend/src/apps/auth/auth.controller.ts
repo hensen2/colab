@@ -8,7 +8,7 @@ import {
 } from "../../lib/tokens";
 import { AppError } from "../../lib/appError";
 import { createUser, getUserByEmail, getUserById } from "../users";
-import { TokenResponse } from "../../lib/appResponse";
+import { AuthSuccessResponse } from "../../lib/appResponse";
 
 export const getToken = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -26,7 +26,7 @@ export const getToken = catchAsync(
 
       const accessToken = generateAccessToken(payload.sub!);
 
-      return new TokenResponse(res, accessToken).send();
+      return new AuthSuccessResponse(res, accessToken, "authenticated").send();
     } catch (error: any) {
       next(new AppError("Failure", 401, "Unauthenticated"));
     }
@@ -64,11 +64,7 @@ export const register = catchAsync(
       path: "/",
     });
 
-    res.status(200).json({
-      type: "Success",
-      message: "User created",
-      accessToken,
-    });
+    return new AuthSuccessResponse(res, accessToken, "user created").send();
   },
 );
 
@@ -103,11 +99,7 @@ export const login = catchAsync(
         path: "/",
       });
 
-      return res.status(200).send({
-        type: "Success",
-        message: "Authenticated",
-        accessToken,
-      });
+      return new AuthSuccessResponse(res, accessToken, "authenticated").send();
     } catch (error: any) {
       next(new AppError("Failure", 401, "User authentication failed"));
     }
@@ -118,10 +110,7 @@ export const logout = (_req: Request, res: Response, next: NextFunction) => {
   try {
     res.clearCookie("refreshToken");
 
-    res.status(200).json({
-      message: "Logout success",
-      accessToken: null,
-    });
+    return new AuthSuccessResponse(res, null, "logout success").send();
   } catch (error: any) {
     next(new AppError("Failure", 401, "User logout failed"));
   }
