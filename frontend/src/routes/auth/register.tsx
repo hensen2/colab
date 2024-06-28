@@ -1,5 +1,5 @@
-import { useRegister } from "@/services/auth/api/useRegister";
-import { RegisterForm } from "@/services/auth/components/register-form";
+import { useRegister } from "@/features/auth/api/useRegister";
+import { RegisterForm } from "@/features/auth/components/register-form";
 import { Link } from "react-router-dom";
 
 export default function RegisterPage() {

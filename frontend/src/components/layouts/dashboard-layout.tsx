@@ -8,8 +8,8 @@ import {
 } from "@/components/ui/sheet";
 import { Menu } from "lucide-react";
 import { socket } from "@/lib/socket";
-import { Outlet } from "react-router-dom";
 import Navbar from "@/components/ui/navbar";
+import Editor from "@/features/editor/components/editor";
 
 export default function DashboardLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -74,7 +74,7 @@ export default function DashboardLayout() {
         </div>
 
         <main className="py-10 lg:pl-72">
-          <Outlet />
+          <Editor />
         </main>
       </div>
     </>

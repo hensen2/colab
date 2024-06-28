@@ -15,7 +15,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "./accordion";
-import { useLogout } from "@/services/auth/api/useLogout";
+import { useLogout } from "@/features/auth/api/useLogout";
 
 const navigation = [
   { name: "Dashboard", href: "/", icon: Home, current: true },

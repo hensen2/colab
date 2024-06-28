@@ -1,5 +1,5 @@
-import { useLogin } from "@/services/auth/api/useLogin";
-import { LoginForm } from "@/services/auth/components/login-form";
+import { useLogin } from "@/features/auth/api/useLogin";
+import { LoginForm } from "@/features/auth/components/login-form";
 import { Link } from "react-router-dom";
 
 export default function LoginPage() {

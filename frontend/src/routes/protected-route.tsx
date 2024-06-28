@@ -1,4 +1,4 @@
-import { useToken } from "@/services/auth/api/useToken";
+import { useToken } from "@/features/auth/api/useToken";
 import { Loader2 } from "lucide-react";
 import { Outlet, Navigate } from "react-router-dom";
 
