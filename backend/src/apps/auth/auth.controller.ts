@@ -1,137 +1,134 @@
-import { Request, Response } from "express";
-import jwt from "jsonwebtoken";
+import { NextFunction, Request, Response } from "express";
 import catchAsync from "../../utils/catchAsync";
-import { UserModel } from "../users";
 import bcrypt from "bcrypt";
-import User from "../users/user.model";
+import {
+  generateAccessToken,
+  generateRefreshToken,
+  verifyRefreshToken,
+} from "../../lib/tokens";
+import { AppError } from "../../utils/appError";
+import { createUser, getUserByEmail, getUserById } from "../users/user.service";
 
-export const generateAccessToken = (user: User) => {
-  return jwt.sign({ user }, process.env.ACCESS_JWT_SECRET!, {
-    expiresIn: "1m",
-  });
-};
+export const getToken = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const { refreshToken } = req.cookies;
 
-export const generateRefreshToken = (user: User) => {
-  return jwt.sign({ user }, process.env.REFRESH_JWT_SECRET!, {
-    expiresIn: "1d",
-  });
-};
+    try {
+      const payload = verifyRefreshToken(refreshToken);
 
-export const getToken = (req: Request, res: Response) => {
-  const { refreshToken } = req.cookies;
+      const user = await getUserById(payload.sub!);
 
-  // verify jwt refresh token, throw exception if token isn't valid
-  try {
-    const decoded = jwt.verify(refreshToken, process.env.REFRESH_JWT_SECRET!);
-    const accessToken = generateAccessToken((<any>decoded).user);
+      if (!user) {
+        res.clearCookie("refreshToken");
+        return next(new AppError("Failure", 401, "Invalid refresh token"));
+      }
 
-    return res.status(200).send({
-      message: "Authenticated",
+      const accessToken = generateAccessToken(payload.sub!);
+
+      return res.status(200).send({
+        type: "Success",
+        message: "Authenticated",
+        accessToken,
+      });
+    } catch (error: any) {
+      next(new AppError("Failure", 401, "Unauthenticated"));
+    }
+  },
+);
+
+export const register = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const { firstName, lastName, email, password } = req.body;
+
+    const user = await getUserByEmail(email);
+
+    if (user) {
+      return next(new AppError("Failure", 401, "Email already registered"));
+    }
+
+    const passwordHash = await bcrypt.hash(password, 10);
+
+    const { id } = await createUser({
+      firstName,
+      lastName,
+      email,
+      passwordHash,
+    });
+
+    if (!id) {
+      return next(new AppError("Failure", 400, "User not created"));
+    }
+
+    const accessToken = generateAccessToken(id);
+    const refreshToken = generateRefreshToken(id);
+
+    res.cookie("refreshToken", refreshToken, {
+      httpOnly: true,
+      path: "/",
+    });
+
+    res.status(200).json({
+      type: "Success",
+      message: "User created",
       accessToken,
     });
-  } catch (error: any) {
-    console.log(error?.message);
-    return res.status(401).send({
-      message: "Unauthenticated",
+  },
+);
+
+export const login = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const { email, password } = req.body;
+
+    const user = await getUserByEmail(email);
+
+    if (!user) {
+      return next(
+        new AppError(
+          "Failure",
+          401,
+          "No user registered for this email address",
+        ),
+      );
+    }
+
+    const match = await bcrypt.compare(password, user.passwordHash);
+
+    if (!match) {
+      return next(new AppError("Failure", 401, "Incorrect password"));
+    }
+
+    try {
+      const accessToken = generateAccessToken(user.id);
+      const refreshToken = generateRefreshToken(user.id);
+
+      res.cookie("refreshToken", refreshToken, {
+        httpOnly: true,
+        path: "/",
+      });
+
+      return res.status(200).send({
+        type: "Success",
+        message: "Authenticated",
+        accessToken,
+      });
+    } catch (error: any) {
+      next(new AppError("Failure", 401, "User authentication failed"));
+    }
+  },
+);
+
+export const logout = (_req: Request, res: Response, next: NextFunction) => {
+  try {
+    res.clearCookie("refreshToken");
+
+    res.status(200).json({
+      message: "Logout success",
       accessToken: null,
     });
+  } catch (error: any) {
+    next(new AppError("Failure", 401, "User logout failed"));
   }
 };
-
-export const register = catchAsync(async (req: Request, res: Response) => {
-  const { firstName, lastName, email, password } = req.body;
-  const user = await UserModel.findOne({ email });
-
-  if (user) {
-    return res.status(400).send({
-      message: "Email address already registered.",
-      accessToken: null,
-    });
-  }
-
-  const passwordHash = await bcrypt.hash(password, 10);
-
-  const { id } = await UserModel.create({
-    firstName,
-    lastName,
-    email,
-    passwordHash,
-  });
-
-  if (!id) {
-    return res.status(400).send({
-      message: "User not created.",
-      accessToken: null,
-    });
-  }
-
-  const accessToken = generateAccessToken(id);
-  const refreshToken = generateRefreshToken(id);
-
-  res.cookie("refreshToken", refreshToken, {
-    httpOnly: true,
-    path: "/",
-  });
-
-  res.status(200).json({
-    accessToken,
-    message: "Test user success",
-  });
-});
-
-export const login = catchAsync(async (req: Request, res: Response) => {
-  const { email, password } = req.body;
-  const user = await UserModel.findOne({ email });
-
-  if (!user) {
-    return res.status(401).send({
-      message: "No user registered for this email address.",
-      accessToken: null,
-    });
-  }
-
-  const match = await bcrypt.compare(password, user.passwordHash);
-
-  if (!match) {
-    return res.status(401).send({
-      message: "Incorrect password.",
-      accessToken: null,
-    });
-  }
-
-  const { id } = user;
-
-  const accessToken = generateAccessToken(id);
-  const refreshToken = generateRefreshToken(id);
-
-  res.cookie("refreshToken", refreshToken, {
-    httpOnly: true,
-    path: "/",
-  });
-
-  res.status(200).json({
-    message: "Test user success",
-    accessToken,
-  });
-});
-
-export const logout = catchAsync(async (req: Request, res: Response) => {
-  const refreshToken: string = req.cookies.refreshToken;
-
-  if (!refreshToken) {
-    return res.status(401).send({
-      message: "Unauthenticated",
-      accessToken: null,
-    });
-  }
-
-  res.clearCookie("refreshToken");
-
-  res.status(200).json({
-    message: "Logout success",
-    accessToken: null,
-  });
-});
 
 // export const token = (req: Request, res: Response) => {
 //   const authHeader = req.headers.authorization;

@@ -1,13 +1,13 @@
 import express from "express";
 import { getToken, login, register, logout } from "./auth.controller";
-import { refreshSchema } from "./auth.validation";
+import { loginSchema, registerSchema, tokenSchema } from "./auth.validation";
 import validate from "../../middleware/validate";
 
 const authRouter = express.Router();
 
-authRouter.get("/", validate(refreshSchema), getToken);
-authRouter.post("/register", register);
-authRouter.post("/login", login);
+authRouter.get("/", validate(tokenSchema), getToken);
+authRouter.post("/register", validate(registerSchema), register);
+authRouter.post("/login", validate(loginSchema), login);
 authRouter.post("/logout", logout);
 
 export default authRouter;
