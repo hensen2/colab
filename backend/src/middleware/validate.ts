@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import Joi from "joi";
-import { AppError } from "../utils/appError";
+import { AppError } from "../lib/appError";
 
 const validate =
   (schema: Joi.ObjectSchema<any>) =>

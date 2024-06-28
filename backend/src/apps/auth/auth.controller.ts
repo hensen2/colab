@@ -6,8 +6,9 @@ import {
   generateRefreshToken,
   verifyRefreshToken,
 } from "../../lib/tokens";
-import { AppError } from "../../utils/appError";
-import { createUser, getUserByEmail, getUserById } from "../users/user.service";
+import { AppError } from "../../lib/appError";
+import { createUser, getUserByEmail, getUserById } from "../users";
+import { TokenResponse } from "../../lib/appResponse";
 
 export const getToken = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -25,11 +26,7 @@ export const getToken = catchAsync(
 
       const accessToken = generateAccessToken(payload.sub!);
 
-      return res.status(200).send({
-        type: "Success",
-        message: "Authenticated",
-        accessToken,
-      });
+      return new TokenResponse(res, accessToken).send();
     } catch (error: any) {
       next(new AppError("Failure", 401, "Unauthenticated"));
     }

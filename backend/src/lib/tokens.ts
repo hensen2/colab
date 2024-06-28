@@ -1,7 +1,7 @@
 import jwt, { JwtPayload } from "jsonwebtoken";
 import { tokenInfo } from "./config";
 import { Types } from "mongoose";
-import { AppError } from "../utils/appError";
+import { AppError } from "./appError";
 
 const { accessKey, refreshKey, issuer, audience } = tokenInfo;
 
