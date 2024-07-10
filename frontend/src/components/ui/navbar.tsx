@@ -103,7 +103,7 @@ export default function Navbar() {
             <Accordion type="single" collapsible>
               <AccordionItem value="user">
                 <AccordionTrigger className="border-y border-gray-200 hover:bg-gray-50">
-                  <div className="flex items-center gap-x-4 px-6 py-1 text-sm font-semibold leading-6 text-gray-900">
+                  <div className="flex items-center gap-x-4 px-6 py-1 text-sm font-semibold leading-6 text-gray-700">
                     <span className="h-8 w-8 rounded-full bg-gray-200" />
                     <span className="sr-only">Your profile</span>
                     <span aria-hidden="true">Matt Hensen</span>

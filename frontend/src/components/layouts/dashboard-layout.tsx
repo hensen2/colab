@@ -10,6 +10,7 @@ import { Menu } from "lucide-react";
 import { socket } from "@/lib/socket";
 import Navbar from "@/components/ui/navbar";
 import Editor from "@/features/editor/components/editor";
+import Header from "../ui/header";
 
 export default function DashboardLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -64,7 +65,7 @@ export default function DashboardLayout() {
             </SheetContent>
           </Sheet>
 
-          <div className="flex-1 text-sm font-semibold leading-6 text-gray-900">
+          <div className="flex-1 text-sm font-semibold leading-6 text-gray-700">
             Dashboard
           </div>
           <div>
@@ -73,8 +74,11 @@ export default function DashboardLayout() {
           </div>
         </div>
 
-        <main className="py-10 lg:pl-72">
-          <Editor />
+        <main className="h-screen pb-8 lg:pl-72">
+          <div className="flex h-full flex-col px-4 sm:px-6 lg:px-8">
+            <Header />
+            <Editor />
+          </div>
         </main>
       </div>
     </>
