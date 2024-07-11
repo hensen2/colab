@@ -1,6 +1,6 @@
 import { useToken } from "@/features/auth/api/useToken";
 import { Loader2 } from "lucide-react";
-import { Outlet, Navigate } from "react-router-dom";
+import { Navigate } from "react-router-dom";
 
 export default function ProtectedRoute() {
   const { isSuccess, isLoading, data, error } = useToken();
@@ -17,7 +17,7 @@ export default function ProtectedRoute() {
   }
 
   return isSuccess && data?.accessToken ? (
-    <Outlet />
+    <Navigate to="/app" />
   ) : (
     <Navigate to="/auth/login" />
   );

@@ -8,12 +8,12 @@ import {
 } from "@/components/ui/sheet";
 import { Menu } from "lucide-react";
 import { socket } from "@/lib/socket";
-import Navbar from "@/components/ui/navbar";
-import Editor from "@/features/editor/components/editor";
-import Header from "../ui/header";
+import { Navbar, Header } from "@/components";
+import { Outlet } from "react-router-dom";
 
 export default function DashboardLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [isConnected, setIsConnected] = useState(socket.connected);
 
   useEffect(() => {
     socket.connect();
@@ -22,6 +22,25 @@ export default function DashboardLayout() {
       socket.disconnect();
     };
   }, []);
+
+  useEffect(() => {
+    function onConnect() {
+      setIsConnected(true);
+    }
+
+    function onDisconnect() {
+      setIsConnected(false);
+    }
+
+    socket.on("connect", onConnect);
+    socket.on("disconnect", onDisconnect);
+
+    return () => {
+      socket.off("connect", onConnect);
+      socket.off("disconnect", onDisconnect);
+    };
+  }, []);
+  console.log(isConnected);
 
   return (
     <>
@@ -77,7 +96,7 @@ export default function DashboardLayout() {
         <main className="h-screen pb-8 lg:pl-72">
           <div className="flex h-full flex-col px-4 sm:px-6 lg:px-8">
             <Header />
-            <Editor />
+            <Outlet />
           </div>
         </main>
       </div>

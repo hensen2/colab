@@ -1,3 +1,4 @@
+import MenuBar from "./menu-bar";
 import {
   EditorContent,
   FloatingMenu,
@@ -8,7 +9,10 @@ import StarterKit from "@tiptap/starter-kit";
 import Highlight from "@tiptap/extension-highlight";
 import TaskList from "@tiptap/extension-task-list";
 import TaskItem from "@tiptap/extension-task-item";
-import MenuBar from "./menu-bar";
+import Collaboration from "@tiptap/extension-collaboration";
+import * as Y from "yjs";
+
+const doc = new Y.Doc();
 
 const Editor = () => {
   const editor = useEditor({
@@ -33,6 +37,9 @@ const Editor = () => {
       Highlight,
       TaskList,
       TaskItem,
+      Collaboration.configure({
+        document: doc,
+      }),
     ],
     editorProps: {
       attributes: {
@@ -40,7 +47,6 @@ const Editor = () => {
           "prose prose-sm sm:prose-base lg:prose-lg xl:prose-2xl p-5 min-w-full focus:outline-none",
       },
     },
-    content: "<p>Hypothesis</p>",
   });
 
   return (

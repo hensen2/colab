@@ -6,29 +6,46 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
+import { Fragment } from "react/jsx-runtime";
 
 export default function Header() {
+  const { pathname } = useLocation();
+
+  // extract relative paths as array of strings
+  const relativePaths =
+    pathname !== "/app" ? location.pathname.slice(5).split("/") : null;
+  const pathLength = relativePaths?.length;
+
   return (
     <div>
       <div className="flex h-16 shrink-0 items-center">
         <Breadcrumb>
           <BreadcrumbList>
             <BreadcrumbItem>
-              <BreadcrumbLink asChild>
-                <Link to="/">Home</Link>
-              </BreadcrumbLink>
+              {!relativePaths ? (
+                <BreadcrumbPage>Dashboard</BreadcrumbPage>
+              ) : (
+                <BreadcrumbLink asChild>
+                  <Link to="/app">Dashboard</Link>
+                </BreadcrumbLink>
+              )}
             </BreadcrumbItem>
-            <BreadcrumbSeparator />
-            <BreadcrumbItem>
-              <BreadcrumbLink asChild>
-                <Link to="/projects">Projects</Link>
-              </BreadcrumbLink>
-            </BreadcrumbItem>
-            <BreadcrumbSeparator />
-            <BreadcrumbItem>
-              <BreadcrumbPage>Experiment Notebook</BreadcrumbPage>
-            </BreadcrumbItem>
+            {pathLength &&
+              relativePaths.map((name, idx) => (
+                <Fragment key={name}>
+                  <BreadcrumbSeparator />
+                  <BreadcrumbItem className="capitalize">
+                    {idx === pathLength - 1 ? (
+                      <BreadcrumbPage>{name}</BreadcrumbPage>
+                    ) : (
+                      <BreadcrumbLink asChild>
+                        <Link to={`/app/${name}`}>{name}</Link>
+                      </BreadcrumbLink>
+                    )}
+                  </BreadcrumbItem>
+                </Fragment>
+              ))}
           </BreadcrumbList>
         </Breadcrumb>
       </div>

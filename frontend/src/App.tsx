@@ -1,35 +1,52 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import DashboardLayout from "@/components/layouts/dashboard-layout";
-import ErrorPage from "./routes/error-page";
+import { DashboardLayout, AuthLayout } from "@/components/layouts";
+import {
+  HomePage,
+  DocumentsPage,
+  TeamsPage,
+  ProjectsPage,
+  CalendarPage,
+  ProtocolsPage,
+  ErrorPage,
+  ProtectedRoute,
+  LoginPage,
+  RegisterPage,
+} from "./routes";
 import { QueryClientProvider } from "@tanstack/react-query";
-import AuthLayout from "./components/layouts/auth-layout";
-import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-import ProtectedRoute from "./routes/protected-route";
-import LoginPage from "./routes/auth/login";
-import RegisterPage from "./routes/auth/register";
 import { queryClient } from "./lib/query-client";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
 const router = createBrowserRouter([
   {
     path: "/",
     element: <ProtectedRoute />,
     errorElement: <ErrorPage />,
+  },
+  {
+    path: "/app",
+    element: <DashboardLayout />,
+    errorElement: <ErrorPage />,
     children: [
-      { index: true, element: <DashboardLayout /> },
+      { index: true, element: <HomePage /> },
       {
         path: "teams",
+        element: <TeamsPage />,
       },
       {
         path: "projects",
+        element: <ProjectsPage />,
       },
       {
         path: "calendar",
+        element: <CalendarPage />,
       },
       {
         path: "documents",
+        element: <DocumentsPage />,
       },
       {
         path: "protocols",
+        element: <ProtocolsPage />,
       },
     ],
   },

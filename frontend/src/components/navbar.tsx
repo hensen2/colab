@@ -8,22 +8,22 @@ import {
   LogOut,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-} from "./accordion";
+} from "@/components/ui/accordion";
 import { useLogout } from "@/features/auth/api/useLogout";
 
 const navigation = [
-  { name: "Dashboard", href: "/", icon: Home, current: true },
-  { name: "Teams", href: "teams", icon: Users, current: false },
-  { name: "Projects", href: "projects", icon: FolderClosed, current: false },
-  { name: "Calendar", href: "calendar", icon: Calendar, current: false },
-  { name: "Documents", href: "documents", icon: Files, current: false },
-  { name: "Protocols", href: "protocols", icon: FlaskConical, current: false },
+  { name: "Dashboard", href: "", icon: Home },
+  { name: "Teams", href: "/teams", icon: Users },
+  { name: "Projects", href: "/projects", icon: FolderClosed },
+  { name: "Calendar", href: "/calendar", icon: Calendar },
+  { name: "Documents", href: "/documents", icon: Files },
+  { name: "Protocols", href: "/protocols", icon: FlaskConical },
 ];
 const teams = [
   { id: 1, name: "Tempus AI", href: "#", initial: "T", current: false },
@@ -33,6 +33,10 @@ const teams = [
 
 export default function Navbar() {
   const logout = useLogout();
+  const { pathname } = useLocation();
+
+  // extract relative path from react router state
+  const relativePath = pathname.slice(4);
 
   return (
     <>
@@ -43,9 +47,9 @@ export default function Navbar() {
               {navigation.map((item) => (
                 <li key={item.name}>
                   <Link
-                    to={item.href}
+                    to={`/app${item.href}`}
                     className={cn(
-                      item.current
+                      item.href === relativePath
                         ? "bg-gray-50 text-indigo-600"
                         : "text-gray-700 hover:bg-gray-50 hover:text-indigo-600",
                       "group flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6",
@@ -53,7 +57,7 @@ export default function Navbar() {
                   >
                     <item.icon
                       className={cn(
-                        item.current
+                        item.href === relativePath
                           ? "text-indigo-600"
                           : "text-gray-400 group-hover:text-indigo-600",
                         "h-6 w-6 shrink-0",
