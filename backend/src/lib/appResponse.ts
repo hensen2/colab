@@ -17,12 +17,14 @@ export class AuthSuccessResponse extends AppResponse {
   constructor(
     private res: Response,
     private accessToken: string | null,
-    private message: string,
+    private user: { email: string; name: string } | null,
+    private message: string = "authenticated",
   ) {
     super(StatusType.SUCCESS, StatusCode.SUCCESS);
 
     this.res = res;
     this.accessToken = accessToken;
+    this.user = user;
     this.message = message;
   }
 
@@ -31,6 +33,7 @@ export class AuthSuccessResponse extends AppResponse {
       type: this.statusType,
       message: this.message,
       accessToken: this.accessToken,
+      user: this.user,
     });
   }
 }

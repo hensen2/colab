@@ -1,35 +1,27 @@
-import {
-  Table,
-  TableBody,
-  TableCaption,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+import { Experiment, columns } from "@/features/experiments/components/columns";
+import { DataTable } from "@/features/experiments/components/data-table";
+
+// async function getData(): Promise<Experiment[]> {
+//   return
+// }
+
+const data: Experiment[] = [
+  {
+    id: "728ed52f",
+    name: "Experiment 1",
+    tags: "NGS",
+    createdBy: "Matt Hensen",
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
+];
 
 export default function DocumentsPage() {
+  // const data = await getData();
+
   return (
-    <div>
-      <Table>
-        <TableCaption>A list of your recent experiments.</TableCaption>
-        <TableHeader>
-          <TableRow>
-            <TableHead className="w-[100px]">Experiment ID</TableHead>
-            <TableHead>Status</TableHead>
-            <TableHead>Method</TableHead>
-            <TableHead className="text-right">Amount</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          <TableRow>
-            <TableCell className="font-medium">INV001</TableCell>
-            <TableCell>Paid</TableCell>
-            <TableCell>Credit Card</TableCell>
-            <TableCell className="text-right">$250.00</TableCell>
-          </TableRow>
-        </TableBody>
-      </Table>
+    <div className="container mx-auto py-10">
+      <DataTable columns={columns} data={data} />
     </div>
   );
 }

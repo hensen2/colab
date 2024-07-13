@@ -1,10 +1,10 @@
 // Root Routes
-export { default as ProtectedRoute } from "./protected-route";
-export { default as ErrorPage } from "./error-page";
+export { default as ProtectedRoute } from "./ProtectedRoute";
+export { default as ErrorPage } from "./ErrorPage";
 
 // Auth Routes
-export { default as LoginPage } from "./auth/login";
-export { default as RegisterPage } from "./auth/register";
+export { default as LoginPage } from "./auth/Login";
+export { default as RegisterPage } from "./auth/Register";
 
 // App Routes
 export { default as HomePage } from "./app/home";

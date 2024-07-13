@@ -1,5 +1,9 @@
 export interface AuthResponse {
   accessToken: string | null;
+  user: {
+    email: string;
+    name: string;
+  } | null;
   message: string | null;
 }
 
@@ -13,4 +17,9 @@ export interface RegisterUser {
   lastName: string;
   email: string;
   password: string;
+}
+
+export interface UserResponse {
+  name: string;
+  email: string;
 }

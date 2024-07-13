@@ -1,9 +1,22 @@
 import jwt, { JwtPayload } from "jsonwebtoken";
 import { tokenInfo } from "./config";
 import { Types } from "mongoose";
-import { AppError } from "./appError";
+import { AccessTokenError, RefreshTokenError } from "./appError";
 
 const { accessKey, refreshKey, issuer, audience } = tokenInfo;
+
+export const verifyAccessToken = (accessToken: string): JwtPayload => {
+  const payload = jwt.verify(accessToken, tokenInfo.accessKey, {
+    audience,
+    issuer,
+  }) as JwtPayload;
+
+  if (!payload.sub || !Types.ObjectId.isValid(payload.sub)) {
+    throw new AccessTokenError();
+  } else {
+    return payload;
+  }
+};
 
 export const verifyRefreshToken = (refreshToken: string): JwtPayload => {
   const payload = jwt.verify(refreshToken, tokenInfo.refreshKey, {
@@ -12,7 +25,7 @@ export const verifyRefreshToken = (refreshToken: string): JwtPayload => {
   }) as JwtPayload;
 
   if (!payload.sub || !Types.ObjectId.isValid(payload.sub)) {
-    throw new AppError("Failure", 401, "Invalid refresh token");
+    throw new RefreshTokenError();
   } else {
     return payload;
   }

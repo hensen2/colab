@@ -19,6 +19,7 @@ export function useLogin() {
     mutationFn: loginUser,
     onSuccess: (data) => {
       setToken(data);
+      // api.defaults.headers.common.Authorization = `Bearer ${data.accessToken}`;
     },
   });
 }

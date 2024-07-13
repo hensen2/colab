@@ -11,5 +11,6 @@ export function useToken() {
   return useQuery<AuthResponse, AxiosError>({
     queryKey: ["auth"],
     queryFn: getToken,
+    refetchInterval: 1000 * 60,
   });
 }

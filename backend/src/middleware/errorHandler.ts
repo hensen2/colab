@@ -10,14 +10,14 @@ const errorHandler = (
 ) => {
   logger.error(err);
 
-  const { type, statusCode, message } = err;
+  const { errorType, message } = err;
 
   const response = {
-    type,
+    errorType,
     message,
   };
 
-  res.status(statusCode).send(response);
+  res.status(400).send(response);
 };
 
 export default errorHandler;

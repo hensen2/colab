@@ -18,6 +18,7 @@ export function useLogout() {
     mutationFn: logoutUser,
     onSuccess: () => {
       setToken();
+      // api.defaults.headers.common.Authorization = `Bearer ${null}`;
     },
   });
 }

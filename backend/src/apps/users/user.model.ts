@@ -16,14 +16,12 @@ const userSchema = new Schema<User>(
       type: Schema.Types.String,
       trim: true,
       maxlength: 50,
-      select: false,
       required: true,
     },
     lastName: {
       type: Schema.Types.String,
       trim: true,
       maxlength: 50,
-      select: false,
       required: true,
     },
     email: {

@@ -3,10 +3,9 @@ import { Loader2 } from "lucide-react";
 import { Navigate } from "react-router-dom";
 
 export default function ProtectedRoute() {
-  const { isSuccess, isLoading, data, error } = useToken();
-  console.log(error?.response?.status);
+  const { isPending, isSuccess, data } = useToken();
 
-  if (isLoading) {
+  if (isPending) {
     return (
       <>
         <div className="flex h-screen w-screen items-center justify-center">
@@ -16,7 +15,7 @@ export default function ProtectedRoute() {
     );
   }
 
-  return isSuccess && data?.accessToken ? (
+  return isSuccess && data.accessToken && data.user ? (
     <Navigate to="/app" />
   ) : (
     <Navigate to="/auth/login" />

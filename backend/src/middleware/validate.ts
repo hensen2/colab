@@ -1,14 +1,23 @@
-import { NextFunction, Request, Response } from "express";
+import { NextFunction, Response } from "express";
 import Joi from "joi";
-import { AppError } from "../lib/appError";
+import { BadRequestError } from "../lib/appError";
+import { PublicRequest } from "../types/request.types";
+
+export enum RequestSource {
+  BODY = "body",
+  HEADER = "headers",
+  COOKIE = "cookies",
+  QUERY = "query",
+  PARAM = "params",
+}
 
 const validate =
-  (schema: Joi.ObjectSchema<any>) =>
-  (req: Request, _res: Response, next: NextFunction) => {
-    const { error } = schema.validate(req);
+  (schema: Joi.ObjectSchema<any>, source: RequestSource = RequestSource.BODY) =>
+  (req: PublicRequest, _res: Response, next: NextFunction) => {
+    const { error } = schema.validate(req[source]);
 
     if (error) {
-      return next(new AppError("Failure", 401, "Bad request"));
+      return next(new BadRequestError());
     }
 
     return next();
