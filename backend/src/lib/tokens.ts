@@ -6,7 +6,7 @@ import { AccessTokenError, RefreshTokenError } from "./appError";
 const { accessKey, refreshKey, issuer, audience } = tokenInfo;
 
 export const verifyAccessToken = (accessToken: string): JwtPayload => {
-  const payload = jwt.verify(accessToken, tokenInfo.accessKey, {
+  const payload = jwt.verify(accessToken, accessKey, {
     audience,
     issuer,
   }) as JwtPayload;
@@ -19,7 +19,7 @@ export const verifyAccessToken = (accessToken: string): JwtPayload => {
 };
 
 export const verifyRefreshToken = (refreshToken: string): JwtPayload => {
-  const payload = jwt.verify(refreshToken, tokenInfo.refreshKey, {
+  const payload = jwt.verify(refreshToken, refreshKey, {
     audience,
     issuer,
   }) as JwtPayload;

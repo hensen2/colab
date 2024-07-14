@@ -1,7 +1,8 @@
 import express from "express";
 import { getToken, login, register, logout } from "./auth.controller";
 import { loginSchema, refreshSchema, registerSchema } from "./auth.validation";
-import validate, { RequestSource } from "../../middleware/validate";
+import validate from "../middleware/validate";
+import { RequestSource } from "../types/request.types";
 
 const authRouter = express.Router();
 

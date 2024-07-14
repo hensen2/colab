@@ -1,18 +1,10 @@
 import { NextFunction, Response } from "express";
 import Joi from "joi";
 import { BadRequestError } from "../lib/appError";
-import { PublicRequest } from "../types/request.types";
-
-export enum RequestSource {
-  BODY = "body",
-  HEADER = "headers",
-  COOKIE = "cookies",
-  QUERY = "query",
-  PARAM = "params",
-}
+import { PublicRequest, RequestSource } from "../types/request.types";
 
 const validate =
-  (schema: Joi.ObjectSchema<any>, source: RequestSource = RequestSource.BODY) =>
+  (schema: Joi.AnySchema, source: RequestSource = RequestSource.BODY) =>
   (req: PublicRequest, _res: Response, next: NextFunction) => {
     const { error } = schema.validate(req[source]);
 
@@ -20,7 +12,7 @@ const validate =
       return next(new BadRequestError());
     }
 
-    return next();
+    next();
   };
 
 export default validate;

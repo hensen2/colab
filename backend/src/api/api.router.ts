@@ -1,8 +1,9 @@
 import express from "express";
-import validate, { RequestSource } from "../../middleware/validate";
-import accessApi from "../../middleware/accessApi";
-import userRouter from "../users";
+import validate from "../middleware/validate";
+import accessApi from "../middleware/accessApi";
+import userRouter from "../apps/users";
 import { accessSchema, refreshSchema } from "../auth/auth.validation";
+import { RequestSource } from "../types/request.types";
 
 const apiRouter = express.Router();
 

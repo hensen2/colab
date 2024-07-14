@@ -1,6 +1,6 @@
 import { NextFunction, Response } from "express";
 import { verifyAccessToken, verifyRefreshToken } from "../lib/tokens";
-import { BadTokenError } from "../lib/appError";
+import { BadTokensError, NotFoundError } from "../lib/appError";
 import { getUserById } from "../apps/users";
 import catchAsync from "../utils/catchAsync";
 import User from "../apps/users/user.model";
@@ -17,14 +17,14 @@ const accessApi = catchAsync(
 
     if (accessTokenPayload.sub !== refreshTokenPayload.sub) {
       res.clearCookie("refreshToken");
-      throw new BadTokenError("Invalid token data");
+      throw new BadTokensError("Invalid tokens: Token subjects don't match");
     }
 
     const user = (await getUserById(accessTokenPayload.sub!)) as User;
 
     if (!user) {
       res.clearCookie("refreshToken");
-      throw new BadTokenError();
+      throw new NotFoundError("User not found");
     }
 
     req.user = user;
