@@ -8,6 +8,8 @@ const errorHandler = (
   res: Response,
   next: NextFunction,
 ) => {
+  logger.error(err);
+
   // if error encountered after writing response to client, send error to default express handler
   if (res.headersSent) {
     return next(err);
@@ -19,7 +21,7 @@ const errorHandler = (
     if (req.originalUrl === "/auth") {
       res.status(statusCode).json({
         errorType,
-        message,
+        message: err.message,
       });
     } else {
       res.status(statusCode).json({
@@ -28,8 +30,6 @@ const errorHandler = (
       });
     }
   }
-  logger.error(err);
-  return;
 };
 
 export default errorHandler;
