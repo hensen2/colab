@@ -2,7 +2,7 @@ export enum StatusType {
   SUCCESS = "Success",
   FAILURE = "Failure",
   RETRY = "Retry",
-  INVALID_REFRESH_TOKEN = "Unauthenticated",
+  NO_REFRESH_TOKEN = "Unauthenticated",
   INVALID_ACCESS_TOKEN = "Unauthorized",
 }
 
@@ -27,4 +27,5 @@ export enum ErrorType {
   BAD_REQUEST = "BadRequestError",
   FORBIDDEN = "ForbiddenError",
   CONFLICT = "ConflictError",
+  BAD_AUTH_REQUEST = "BadAuthRequestError",
 }

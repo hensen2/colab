@@ -98,6 +98,15 @@ export class AuthFailureError extends AppError {
   }
 }
 
+export class BadAuthRequestError extends AppError {
+  constructor(message = "No refresh token found") {
+    super(ErrorType.BAD_AUTH_REQUEST, StatusCode.UNAUTHENTICATED, message);
+
+    Object.setPrototypeOf(this, new.target.prototype);
+    Error.captureStackTrace(this);
+  }
+}
+
 export class InternalError extends AppError {
   constructor(message = "Internal server error") {
     super(ErrorType.INTERNAL, StatusCode.INTERNAL, message);

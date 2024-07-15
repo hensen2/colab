@@ -34,6 +34,7 @@ export const getToken = catchAsync(async (req: Request, res: Response) => {
       email: user.email,
       name: `${user.firstName} ${user.lastName}`,
     },
+    isAuthenticated: true,
   });
 });
 
@@ -75,6 +76,7 @@ export const register = catchAsync(async (req: Request, res: Response) => {
       email: user.email,
       name: `${user.firstName} ${user.lastName}`,
     },
+    isAuthenticated: true,
   });
 });
 
@@ -109,6 +111,7 @@ export const login = catchAsync(async (req: Request, res: Response) => {
       email: user.email,
       name: `${user.firstName} ${user.lastName}`,
     },
+    isAuthenticated: true,
   });
 });
 
@@ -120,5 +123,6 @@ export const logout = (_req: Request, res: Response) => {
     message: "User logged out",
     accessToken: null,
     user: null,
+    isAuthenticated: false,
   });
 };

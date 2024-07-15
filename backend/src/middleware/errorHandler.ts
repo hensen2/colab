@@ -4,10 +4,11 @@ import logger from "../lib/logger";
 
 const errorHandler = (
   err: AppError,
-  req: Request,
+  _req: Request,
   res: Response,
   next: NextFunction,
 ) => {
+  // log error first
   logger.error(err);
 
   // if error encountered after writing response to client, send error to default express handler
@@ -18,17 +19,12 @@ const errorHandler = (
   if (err instanceof AppError) {
     const { errorType, statusCode, message } = err;
 
-    if (req.originalUrl === "/auth") {
-      res.status(statusCode).json({
-        errorType,
-        message: err.message,
-      });
-    } else {
-      res.status(statusCode).json({
-        errorType,
-        message,
-      });
-    }
+    return res.status(statusCode).json({
+      errorType,
+      message,
+    });
+  } else {
+    next(err);
   }
 };
 

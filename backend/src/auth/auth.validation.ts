@@ -1,7 +1,8 @@
 import Joi from "joi";
+import { BadAuthRequestError } from "../lib/appError";
 
 export const refreshSchema = Joi.object({
-  refreshToken: Joi.string().required(),
+  refreshToken: Joi.string().error(new BadAuthRequestError()).required(),
 }).required();
 
 export const accessSchema = Joi.object({
