@@ -1,9 +1,9 @@
-import { DashboardLayout } from "@/components/layouts";
+import { AuthLayout } from "@/components/layouts";
 import Spinner from "@/components/ui/Spinner";
 import { useAuth } from "@/features/auth/api/useAuth";
 import { Navigate, useNavigation } from "react-router-dom";
 
-export const ProtectedRoute = () => {
+export const PublicRoute = () => {
   const { data } = useAuth();
   const navigation = useNavigation();
 
@@ -11,9 +11,5 @@ export const ProtectedRoute = () => {
     return <Spinner />;
   }
 
-  return data?.isAuthenticated ? (
-    <DashboardLayout />
-  ) : (
-    <Navigate to="/auth/login" />
-  );
+  return data?.isAuthenticated ? <Navigate to="/" /> : <AuthLayout />;
 };

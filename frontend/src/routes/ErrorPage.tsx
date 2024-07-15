@@ -1,12 +1,16 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+import { AxiosError } from "axios";
 import { isRouteErrorResponse, Link, useRouteError } from "react-router-dom";
 
 export default function ErrorPage() {
   const error = useRouteError();
-  console.error(error);
 
   let errorMessage = "";
   if (isRouteErrorResponse(error)) {
     errorMessage = error.statusText;
+  } else if (error instanceof AxiosError) {
+    errorMessage = error.response?.data.message;
   } else if (error instanceof Error) {
     errorMessage = error.message;
   }

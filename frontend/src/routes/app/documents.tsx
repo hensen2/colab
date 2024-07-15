@@ -1,5 +1,5 @@
-import { Experiment, columns } from "@/features/experiments/components/columns";
-import { DataTable } from "@/features/experiments/components/data-table";
+import { Experiment, columns } from "@/features/experiments/components/Columns";
+import { DataTable } from "@/features/experiments/components/DataTable";
 
 // async function getData(): Promise<Experiment[]> {
 //   return

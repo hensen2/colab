@@ -14,11 +14,11 @@ import {
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-} from "@/components/ui/accordion";
+} from "@/components/ui/Accordion";
 import { useLogout } from "@/features/auth/api/useLogout";
 
 const navigation = [
-  { name: "Dashboard", href: "", icon: Home },
+  { name: "Dashboard", href: "/", icon: Home },
   { name: "Teams", href: "/teams", icon: Users },
   { name: "Projects", href: "/projects", icon: FolderClosed },
   { name: "Calendar", href: "/calendar", icon: Calendar },
@@ -35,9 +35,6 @@ export default function Navbar() {
   const logout = useLogout();
   const { pathname } = useLocation();
 
-  // extract relative path from react router state
-  const relativePath = pathname.slice(4);
-
   return (
     <>
       <nav className="flex flex-1 flex-col">
@@ -47,9 +44,9 @@ export default function Navbar() {
               {navigation.map((item) => (
                 <li key={item.name}>
                   <Link
-                    to={`/app${item.href}`}
+                    to={item.href}
                     className={cn(
-                      item.href === relativePath
+                      item.href === pathname
                         ? "bg-gray-50 text-indigo-600"
                         : "text-gray-700 hover:bg-gray-50 hover:text-indigo-600",
                       "group flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6",
@@ -57,7 +54,7 @@ export default function Navbar() {
                   >
                     <item.icon
                       className={cn(
-                        item.href === relativePath
+                        item.href === pathname
                           ? "text-indigo-600"
                           : "text-gray-400 group-hover:text-indigo-600",
                         "h-6 w-6 shrink-0",

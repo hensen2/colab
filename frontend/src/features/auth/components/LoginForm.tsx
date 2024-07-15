@@ -2,7 +2,7 @@
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/Button";
 import {
   Form,
   FormControl,
@@ -10,10 +10,10 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
+} from "@/components/ui/Form";
+import { Input } from "@/components/ui/Input";
 import { UseMutateFunction } from "@tanstack/react-query";
-import { AuthResponse, LoginUser } from "@/types/api-types";
+import { AuthResponse, LoginUser } from "@/types/api.types";
 import { useNavigate } from "react-router-dom";
 
 const formSchema = z.object({

@@ -1,10 +1,12 @@
 export interface AuthResponse {
+  type: string;
+  message: string;
   accessToken: string | null;
   user: {
     email: string;
     name: string;
   } | null;
-  message: string | null;
+  isAuthenticated: boolean;
 }
 
 export interface LoginUser {

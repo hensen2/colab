@@ -5,17 +5,15 @@ import {
   SheetHeader,
   SheetTitle,
   SheetTrigger,
-} from "@/components/ui/sheet";
-import { Loader2, Menu } from "lucide-react";
+} from "@/components/ui/Sheet";
+import { Menu } from "lucide-react";
 import { socket } from "@/lib/socket";
 import { Navbar, Header } from "@/components";
-import { Navigate, Outlet } from "react-router-dom";
-import { useToken } from "@/features/auth/api/useToken";
+import { Outlet } from "react-router-dom";
 
 export default function DashboardLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [isConnected, setIsConnected] = useState(socket.connected);
-  const { isSuccess, isPending, data } = useToken();
 
   useEffect(() => {
     socket.connect();
@@ -44,17 +42,7 @@ export default function DashboardLayout() {
   }, []);
   console.log(isConnected);
 
-  if (isPending) {
-    return (
-      <>
-        <div className="flex h-screen w-screen items-center justify-center">
-          <Loader2 size={64} className="animate-spin" />
-        </div>
-      </>
-    );
-  }
-
-  return isSuccess && data.accessToken && data.user ? (
+  return (
     <>
       <div>
         {/* Static sidebar for desktop */}
@@ -113,7 +101,5 @@ export default function DashboardLayout() {
         </main>
       </div>
     </>
-  ) : (
-    <Navigate to="/auth/login" />
   );
 }

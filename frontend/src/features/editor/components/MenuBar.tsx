@@ -1,6 +1,6 @@
 import type { Editor } from "@tiptap/react";
 import { Fragment } from "react";
-import MenuItem from "./menu-item";
+import MenuItem from "./MenuItem";
 import {
   Bold,
   Code,

@@ -1,71 +1,10 @@
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import { DashboardLayout, AuthLayout } from "@/components/layouts";
-import {
-  HomePage,
-  DocumentsPage,
-  TeamsPage,
-  ProjectsPage,
-  CalendarPage,
-  ProtocolsPage,
-  ErrorPage,
-  ProtectedRoute,
-  LoginPage,
-  RegisterPage,
-} from "./routes";
+import { RouterProvider } from "react-router-dom";
 import { QueryClientProvider } from "@tanstack/react-query";
-import { queryClient } from "./lib/query-client";
+import { queryClient } from "./lib/queryClient";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+import createRouter from "./routes";
 
-const router = createBrowserRouter([
-  {
-    path: "/",
-    element: <ProtectedRoute />,
-    errorElement: <ErrorPage />,
-  },
-  {
-    path: "/app",
-    element: <DashboardLayout />,
-    errorElement: <ErrorPage />,
-    children: [
-      { index: true, element: <HomePage /> },
-      {
-        path: "teams",
-        element: <TeamsPage />,
-      },
-      {
-        path: "projects",
-        element: <ProjectsPage />,
-      },
-      {
-        path: "calendar",
-        element: <CalendarPage />,
-      },
-      {
-        path: "documents",
-        element: <DocumentsPage />,
-      },
-      {
-        path: "protocols",
-        element: <ProtocolsPage />,
-      },
-    ],
-  },
-  {
-    path: "/auth",
-    element: <AuthLayout />,
-    errorElement: <ErrorPage />,
-    children: [
-      {
-        path: "login",
-        element: <LoginPage />,
-      },
-      {
-        path: "register",
-        element: <RegisterPage />,
-      },
-    ],
-  },
-]);
+const router = createRouter(queryClient);
 
 export default function App() {
   return (

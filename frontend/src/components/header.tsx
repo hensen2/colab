@@ -5,7 +5,7 @@ import {
   BreadcrumbList,
   BreadcrumbPage,
   BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb";
+} from "@/components/ui/Breadcrumb";
 import { Link, useLocation } from "react-router-dom";
 import { Fragment } from "react/jsx-runtime";
 
@@ -14,7 +14,7 @@ export default function Header() {
 
   // extract relative paths as array of strings
   const relativePaths =
-    pathname !== "/app" ? location.pathname.slice(5).split("/") : null;
+    pathname !== "/" ? location.pathname.slice(1).split("/") : null;
   const pathLength = relativePaths?.length;
 
   return (
@@ -27,7 +27,7 @@ export default function Header() {
                 <BreadcrumbPage>Dashboard</BreadcrumbPage>
               ) : (
                 <BreadcrumbLink asChild>
-                  <Link to="/app">Dashboard</Link>
+                  <Link to="/">Dashboard</Link>
                 </BreadcrumbLink>
               )}
             </BreadcrumbItem>
@@ -40,7 +40,7 @@ export default function Header() {
                       <BreadcrumbPage>{name}</BreadcrumbPage>
                     ) : (
                       <BreadcrumbLink asChild>
-                        <Link to={`/app/${name}`}>{name}</Link>
+                        <Link to={`/${name}`}>{name}</Link>
                       </BreadcrumbLink>
                     )}
                   </BreadcrumbItem>

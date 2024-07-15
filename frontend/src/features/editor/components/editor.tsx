@@ -1,4 +1,4 @@
-import MenuBar from "./menu-bar";
+import MenuBar from "./MenuBar";
 import {
   EditorContent,
   FloatingMenu,

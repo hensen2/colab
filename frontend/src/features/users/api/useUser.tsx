@@ -1,5 +1,5 @@
 import { api } from "@/lib/api";
-import { UserResponse } from "@/types/api-types";
+import { UserResponse } from "@/types/api.types";
 import { useQuery } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 

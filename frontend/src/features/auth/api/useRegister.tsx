@@ -1,5 +1,5 @@
 import { api } from "@/lib/api";
-import { AuthResponse, RegisterUser } from "@/types/api-types";
+import { AuthResponse, RegisterUser } from "@/types/api.types";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useCallback } from "react";
 
