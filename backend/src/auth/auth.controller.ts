@@ -14,6 +14,9 @@ import {
 } from "../lib/appError";
 import { createUser, getUserByEmail, getUserById } from "../apps/users";
 import { StatusCode, StatusType } from "../types/response.types";
+import { createWorkspace } from "../apps/workspaces";
+import { runTransaction } from "../db/runTransaction";
+import { AuthRequest } from "../types/request.types";
 
 export const getToken = catchAsync(async (req: Request, res: Response) => {
   const payload = verifyRefreshToken(req.cookies.refreshToken);
@@ -30,15 +33,12 @@ export const getToken = catchAsync(async (req: Request, res: Response) => {
     type: StatusType.SUCCESS,
     message: "Authenticated",
     accessToken,
-    user: {
-      email: user.email,
-      name: `${user.firstName} ${user.lastName}`,
-    },
+    user,
     isAuthenticated: true,
   });
 });
 
-export const register = catchAsync(async (req: Request, res: Response) => {
+export const register = catchAsync(async (req: AuthRequest, res: Response) => {
   const { firstName, lastName, email, password } = req.body;
 
   const isUser = await getUserByEmail(email);
@@ -49,19 +49,48 @@ export const register = catchAsync(async (req: Request, res: Response) => {
 
   const passwordHash = await bcrypt.hash(password, 10);
 
-  const user = await createUser({
-    firstName,
-    lastName,
-    email,
-    passwordHash,
+  await runTransaction(async (session) => {
+    const [workspace] = await createWorkspace(
+      {
+        name: `${firstName}'s Workspace`,
+        createdBy: email,
+      },
+      { session },
+    );
+
+    if (!workspace) {
+      throw new BadRequestError(
+        "Bad request: Unable to setup new user account",
+      );
+    }
+
+    const [user] = await createUser(
+      {
+        firstName,
+        lastName,
+        email,
+        passwordHash,
+        workspace: {
+          id: workspace.id,
+          name: workspace.name,
+        },
+      },
+      { session },
+    );
+
+    if (!user) {
+      throw new BadRequestError(
+        "Bad request: Unable to create new user account",
+      );
+    }
+
+    req.user = user;
   });
 
-  if (!user) {
-    throw new BadRequestError("Bad request: Unable to create new user account");
-  }
+  const { user } = req;
 
-  const accessToken = generateAccessToken(user.id);
-  const refreshToken = generateRefreshToken(user.id);
+  const accessToken = generateAccessToken(user!.id);
+  const refreshToken = generateRefreshToken(user!.id);
 
   res.cookie("refreshToken", refreshToken, {
     httpOnly: true,
@@ -72,10 +101,7 @@ export const register = catchAsync(async (req: Request, res: Response) => {
     type: StatusType.SUCCESS,
     message: "User account created",
     accessToken,
-    user: {
-      email: user.email,
-      name: `${user.firstName} ${user.lastName}`,
-    },
+    user,
     isAuthenticated: true,
   });
 });

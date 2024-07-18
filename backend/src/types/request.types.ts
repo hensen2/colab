@@ -1,5 +1,6 @@
 import { Request } from "express";
-import User from "../apps/users/user.model";
+import { UserDoc } from "../apps/users";
+import { WorkspaceDoc } from "../apps/workspaces";
 
 export enum RequestSource {
   BODY = "body",
@@ -8,10 +9,8 @@ export enum RequestSource {
   QUERY = "query",
   PARAM = "params",
 }
-export interface PublicRequest extends Request {
+export interface AuthRequest extends Request {
   accessToken?: string;
-}
-
-export interface ProtectedRequest extends PublicRequest {
-  user?: User;
+  user?: UserDoc;
+  workspace?: WorkspaceDoc;
 }

@@ -3,11 +3,10 @@ import { verifyAccessToken, verifyRefreshToken } from "../lib/tokens";
 import { BadTokensError, NotFoundError } from "../lib/appError";
 import { getUserById } from "../apps/users";
 import catchAsync from "../utils/catchAsync";
-import User from "../apps/users/user.model";
-import { ProtectedRequest } from "../types/request.types";
+import { AuthRequest } from "../types/request.types";
 
 const accessApi = catchAsync(
-  async (req: ProtectedRequest, res: Response, next: NextFunction) => {
+  async (req: AuthRequest, res: Response, next: NextFunction) => {
     const { refreshToken } = req.cookies;
     const authHeader = req.headers.authorization as string;
     const accessToken = authHeader.split(" ")[1];
@@ -20,7 +19,7 @@ const accessApi = catchAsync(
       throw new BadTokensError("Invalid tokens: Token subjects don't match");
     }
 
-    const user = (await getUserById(accessTokenPayload.sub!)) as User;
+    const user = await getUserById(accessTokenPayload.sub!);
 
     if (!user) {
       res.clearCookie("refreshToken");

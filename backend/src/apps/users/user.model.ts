@@ -1,38 +1,51 @@
-import { model, Schema, Types } from "mongoose";
+import { model, Schema } from "mongoose";
+import { IUser } from "./user.types";
 
-export default interface User {
-  _id: Types.ObjectId;
-  firstName: string;
-  lastName: string;
-  email: string;
-  passwordHash: string;
-  createdAt?: Date;
-  updatedAt?: Date;
-}
-
-const userSchema = new Schema<User>(
+const userSchema = new Schema<IUser>(
   {
-    firstName: {
-      type: Schema.Types.String,
+    email: {
+      type: String,
+      unique: true,
+      minlength: 7,
+      maxlength: 63,
       trim: true,
-      maxlength: 50,
+      lowercase: true,
+      required: true,
+    },
+    workspace: {
+      id: {
+        type: Schema.Types.ObjectId,
+        required: true,
+      },
+      name: {
+        type: String,
+        minlength: 3,
+        maxlength: 63,
+        trim: true,
+        required: true,
+      },
+    },
+    firstName: {
+      type: String,
+      minlength: 1,
+      maxlength: 63,
+      trim: true,
       required: true,
     },
     lastName: {
-      type: Schema.Types.String,
-      trim: true,
-      maxlength: 50,
-      required: true,
-    },
-    email: {
-      type: Schema.Types.String,
-      unique: true,
+      type: String,
+      minlength: 2,
+      maxlength: 63,
       trim: true,
       required: true,
     },
     passwordHash: {
-      type: Schema.Types.String,
+      type: String,
       required: true,
+    },
+    avatarUrl: {
+      type: String,
+      default: "",
     },
   },
   {
@@ -41,6 +54,19 @@ const userSchema = new Schema<User>(
   },
 );
 
-userSchema.index({ email: 1 });
+userSchema.set("toJSON", {
+  flattenObjectIds: true,
+  transform: (_doc, user) => {
+    user.name = `${user.firstName} ${user.lastName}`;
 
-export const UserModel = model<User>("User", userSchema);
+    delete user._id;
+    delete user.firstName;
+    delete user.lastName;
+    delete user.passwordHash;
+    delete user.updatedAt;
+    delete user.createdAt;
+    return user;
+  },
+});
+
+export const User = model<IUser>("User", userSchema);

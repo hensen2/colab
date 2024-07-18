@@ -21,13 +21,13 @@ export const accessSchema = Joi.object({
 }).unknown(true);
 
 export const registerSchema = Joi.object({
-  firstName: Joi.string().min(1).required(),
-  lastName: Joi.string().min(1).required(),
-  email: Joi.string().email().lowercase().required(),
-  password: Joi.string().min(8).required(),
+  firstName: Joi.string().min(1).max(63).trim().required(),
+  lastName: Joi.string().min(2).max(63).trim().required(),
+  email: Joi.string().min(7).max(63).email().trim().lowercase().required(),
+  password: Joi.string().min(8).max(63).required(),
 }).required();
 
 export const loginSchema = Joi.object({
-  email: Joi.string().email().lowercase().required(),
-  password: Joi.string().min(8).required(),
+  email: Joi.string().min(8).max(63).email().lowercase().required(),
+  password: Joi.string().min(8).max(63).required(),
 }).required();

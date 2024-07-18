@@ -1,12 +1,12 @@
 import { NextFunction, Response } from "express";
 import Joi from "joi";
 import { BadAuthRequestError, BadRequestError } from "../lib/appError";
-import { PublicRequest, RequestSource } from "../types/request.types";
+import { AuthRequest, RequestSource } from "../types/request.types";
 import { StatusCode, StatusType } from "../types/response.types";
 
 const validate =
   (schema: Joi.AnySchema, source: RequestSource = RequestSource.BODY) =>
-  (req: PublicRequest, res: Response, next: NextFunction) => {
+  (req: AuthRequest, res: Response, next: NextFunction) => {
     const { error } = schema.validate(req[source]);
 
     if (error) {
