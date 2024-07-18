@@ -1,4 +1,6 @@
 import { ColumnDef } from "@tanstack/react-table";
+import { Checkbox } from "@/components/ui/Checkbox";
+import { ColumnHeader } from "@/components/ui/ColumnHeader";
 
 export interface Experiment {
   id: string;
@@ -11,8 +13,30 @@ export interface Experiment {
 
 export const columns: ColumnDef<Experiment>[] = [
   {
+    id: "select",
+    header: ({ table }) => (
+      <Checkbox
+        checked={
+          table.getIsAllPageRowsSelected() ||
+          (table.getIsSomePageRowsSelected() && "indeterminate")
+        }
+        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+        aria-label="Select all"
+      />
+    ),
+    cell: ({ row }) => (
+      <Checkbox
+        checked={row.getIsSelected()}
+        onCheckedChange={(value) => row.toggleSelected(!!value)}
+        aria-label="Select row"
+      />
+    ),
+    enableSorting: false,
+    enableHiding: false,
+  },
+  {
     accessorKey: "name",
-    header: "Name",
+    header: ({ column }) => <ColumnHeader column={column} title="Name" />,
   },
   {
     accessorKey: "tags",
@@ -20,14 +44,14 @@ export const columns: ColumnDef<Experiment>[] = [
   },
   {
     accessorKey: "createdBy",
-    header: "Created By",
+    header: ({ column }) => <ColumnHeader column={column} title="Created By" />,
   },
   {
     accessorKey: "createdAt",
-    header: "Created At",
+    header: ({ column }) => <ColumnHeader column={column} title="Created At" />,
   },
   {
     accessorKey: "updatedAt",
-    header: "Updated At",
+    header: ({ column }) => <ColumnHeader column={column} title="Updated At" />,
   },
 ];

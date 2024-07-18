@@ -18,12 +18,12 @@ import {
 import { useLogout } from "@/features/auth/api/useLogout";
 
 const navigation = [
-  { name: "Dashboard", href: "/", icon: Home },
-  { name: "Teams", href: "/teams", icon: Users },
-  { name: "Projects", href: "/projects", icon: FolderClosed },
-  { name: "Calendar", href: "/calendar", icon: Calendar },
-  { name: "Documents", href: "/documents", icon: Files },
-  { name: "Protocols", href: "/protocols", icon: FlaskConical },
+  { name: "dashboard", href: "/", icon: Home },
+  { name: "teams", href: "/teams", icon: Users },
+  { name: "projects", href: "/projects", icon: FolderClosed },
+  { name: "calendar", href: "/calendar", icon: Calendar },
+  { name: "experiments", href: "/experiments", icon: Files },
+  { name: "protocols", href: "/protocols", icon: FlaskConical },
 ];
 const teams = [
   { id: 1, name: "Tempus AI", href: "#", initial: "T", current: false },
@@ -49,7 +49,7 @@ export default function Navbar() {
                       item.href === pathname
                         ? "bg-gray-50 text-indigo-600"
                         : "text-gray-700 hover:bg-gray-50 hover:text-indigo-600",
-                      "group flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6",
+                      "group flex gap-x-3 rounded-md p-2 text-sm font-semibold capitalize leading-6",
                     )}
                   >
                     <item.icon

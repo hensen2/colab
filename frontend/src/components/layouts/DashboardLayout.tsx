@@ -8,7 +8,7 @@ import {
 } from "@/components/ui/Sheet";
 import { Menu } from "lucide-react";
 import { socket } from "@/lib/socket";
-import { Navbar, Header } from "@/components";
+import { Navbar, Header } from "@/components/blocks";
 import { Outlet } from "react-router-dom";
 
 export default function DashboardLayout() {

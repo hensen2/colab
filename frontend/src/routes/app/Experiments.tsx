@@ -1,5 +1,5 @@
-import { Experiment, columns } from "@/features/experiments/components/Columns";
-import { DataTable } from "@/features/experiments/components/DataTable";
+import { Experiment, columns } from "@/features/experiments/components/columns";
+import { DataTable } from "@/components/blocks";
 
 // async function getData(): Promise<Experiment[]> {
 //   return
@@ -16,11 +16,11 @@ const data: Experiment[] = [
   },
 ];
 
-export default function DocumentsPage() {
+export default function ExperimentsPage() {
   // const data = await getData();
 
   return (
-    <div className="container mx-auto py-10">
+    <div className="w-full pb-10">
       <DataTable columns={columns} data={data} />
     </div>
   );

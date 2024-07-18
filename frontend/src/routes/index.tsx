@@ -15,7 +15,7 @@ import { default as TeamsPage } from "./app/Teams";
 import { default as CalendarPage } from "./app/Calendar";
 import { default as ProjectsPage } from "./app/Projects";
 import { default as ProtocolsPage } from "./app/Protocols";
-import { default as DocumentsPage } from "./app/Documents";
+import { default as ExperimentsPage } from "./app/Experiments";
 
 const createRouter = (queryClient: QueryClient) =>
   createBrowserRouter([
@@ -44,8 +44,8 @@ const createRouter = (queryClient: QueryClient) =>
           element: <CalendarPage />,
         },
         {
-          path: "documents",
-          element: <DocumentsPage />,
+          path: "experiments",
+          element: <ExperimentsPage />,
         },
         {
           path: "protocols",
