@@ -12,7 +12,7 @@ const workspaceSchema = new Schema<IWorkspace>(
     },
     createdBy: {
       type: String,
-      minlength: 8,
+      minlength: 7,
       maxlength: 63,
       trim: true,
       lowercase: true,

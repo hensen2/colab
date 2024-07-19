@@ -3,7 +3,7 @@ import catchAsync from "../utils/catchAsync";
 import bcrypt from "bcrypt";
 import {
   generateAccessToken,
-  generateRefreshToken,
+  generateTokens,
   verifyRefreshToken,
 } from "../lib/tokens";
 import {
@@ -12,33 +12,34 @@ import {
   ConflictError,
   NotFoundError,
 } from "../lib/appError";
-import { createUser, getUserByEmail, getUserById } from "../apps/users";
+import { createUser, getUserByEmail, getUserWithIds } from "../apps/users";
 import { StatusCode, StatusType } from "../types/response.types";
 import { createWorkspace } from "../apps/workspaces";
 import { runTransaction } from "../db/runTransaction";
-import { AuthRequest } from "../types/request.types";
 
 export const getToken = catchAsync(async (req: Request, res: Response) => {
-  const payload = verifyRefreshToken(req.cookies.refreshToken);
-  const user = await getUserById(payload.sub!);
+  const { userId, workspaceId } = verifyRefreshToken(req.cookies.refreshToken);
+
+  const user = await getUserWithIds(userId, workspaceId);
 
   if (!user) {
     res.clearCookie("refreshToken");
     throw new NotFoundError("User not found");
   }
 
-  const accessToken = generateAccessToken(payload.sub!);
+  const accessToken = generateAccessToken(userId, workspaceId);
 
   return res.status(StatusCode.SUCCESS).json({
     type: StatusType.SUCCESS,
     message: "Authenticated",
     accessToken,
+    workspaceId,
     user,
     isAuthenticated: true,
   });
 });
 
-export const register = catchAsync(async (req: AuthRequest, res: Response) => {
+export const register = catchAsync(async (req: Request, res: Response) => {
   const { firstName, lastName, email, password } = req.body;
 
   const isUser = await getUserByEmail(email);
@@ -64,16 +65,15 @@ export const register = catchAsync(async (req: AuthRequest, res: Response) => {
       );
     }
 
+    res.locals.workspaceId = workspace.id;
+
     const [user] = await createUser(
       {
         firstName,
         lastName,
         email,
         passwordHash,
-        workspace: {
-          id: workspace.id,
-          name: workspace.name,
-        },
+        workspace: workspace.id,
       },
       { session },
     );
@@ -84,13 +84,12 @@ export const register = catchAsync(async (req: AuthRequest, res: Response) => {
       );
     }
 
-    req.user = user;
+    res.locals.user = user;
   });
 
-  const { user } = req;
+  const { user, workspaceId } = res.locals;
 
-  const accessToken = generateAccessToken(user!.id);
-  const refreshToken = generateRefreshToken(user!.id);
+  const { accessToken, refreshToken } = generateTokens(user.id, workspaceId);
 
   res.cookie("refreshToken", refreshToken, {
     httpOnly: true,
@@ -101,6 +100,7 @@ export const register = catchAsync(async (req: AuthRequest, res: Response) => {
     type: StatusType.SUCCESS,
     message: "User account created",
     accessToken,
+    workspaceId,
     user,
     isAuthenticated: true,
   });
@@ -121,8 +121,7 @@ export const login = catchAsync(async (req: Request, res: Response) => {
     throw new AuthFailureError("Invalid password attempt");
   }
 
-  const accessToken = generateAccessToken(user.id);
-  const refreshToken = generateRefreshToken(user.id);
+  const { accessToken, refreshToken } = generateTokens(user.id, user.workspace);
 
   res.cookie("refreshToken", refreshToken, {
     httpOnly: true,
@@ -133,10 +132,8 @@ export const login = catchAsync(async (req: Request, res: Response) => {
     type: StatusType.SUCCESS,
     message: "User logged in",
     accessToken,
-    user: {
-      email: user.email,
-      name: `${user.firstName} ${user.lastName}`,
-    },
+    workspaceId: user.workspace,
+    user,
     isAuthenticated: true,
   });
 });
@@ -148,6 +145,7 @@ export const logout = (_req: Request, res: Response) => {
     type: StatusType.SUCCESS,
     message: "User logged out",
     accessToken: null,
+    workspaceId: null,
     user: null,
     isAuthenticated: false,
   });

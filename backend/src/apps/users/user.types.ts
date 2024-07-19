@@ -3,10 +3,7 @@ import { Document, Types } from "mongoose";
 export interface IUser {
   id?: string;
   email: string;
-  workspace: {
-    id: Types.ObjectId;
-    name: string;
-  };
+  workspace: Types.ObjectId;
   firstName: string;
   lastName: string;
   passwordHash: string;

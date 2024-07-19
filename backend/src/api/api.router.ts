@@ -4,6 +4,7 @@ import accessApi from "../middleware/accessApi";
 import userRouter from "../apps/users";
 import { accessSchema, refreshSchema } from "../auth/auth.validation";
 import { RequestSource } from "../types/request.types";
+import projectRouter from "../apps/projects/project.router";
 
 const apiRouter = express.Router();
 
@@ -16,5 +17,6 @@ apiRouter.use(
 
 // api routes
 apiRouter.use("/users", userRouter);
+apiRouter.use("/projects", projectRouter);
 
 export default apiRouter;

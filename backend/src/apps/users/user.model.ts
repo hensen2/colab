@@ -13,17 +13,8 @@ const userSchema = new Schema<IUser>(
       required: true,
     },
     workspace: {
-      id: {
-        type: Schema.Types.ObjectId,
-        required: true,
-      },
-      name: {
-        type: String,
-        minlength: 3,
-        maxlength: 63,
-        trim: true,
-        required: true,
-      },
+      type: Schema.Types.ObjectId,
+      required: true,
     },
     firstName: {
       type: String,
@@ -54,15 +45,20 @@ const userSchema = new Schema<IUser>(
   },
 );
 
+userSchema.index({ _id: 1, workspace: 1 });
+
 userSchema.set("toJSON", {
   flattenObjectIds: true,
   transform: (_doc, user) => {
     user.name = `${user.firstName} ${user.lastName}`;
 
+    if (!user.avatarUrl) delete user.avatarUrl;
+
     delete user._id;
     delete user.firstName;
     delete user.lastName;
     delete user.passwordHash;
+    delete user.workspace;
     delete user.updatedAt;
     delete user.createdAt;
     return user;

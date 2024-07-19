@@ -1,32 +1,31 @@
-import { NextFunction, Response } from "express";
-import { verifyAccessToken, verifyRefreshToken } from "../lib/tokens";
+import { Request, NextFunction, Response } from "express";
+import { verifyTokens } from "../lib/tokens";
 import { BadTokensError, NotFoundError } from "../lib/appError";
-import { getUserById } from "../apps/users";
+import { getUserWithIds } from "../apps/users";
 import catchAsync from "../utils/catchAsync";
-import { AuthRequest } from "../types/request.types";
 
 const accessApi = catchAsync(
-  async (req: AuthRequest, res: Response, next: NextFunction) => {
-    const { refreshToken } = req.cookies;
-    const authHeader = req.headers.authorization as string;
-    const accessToken = authHeader.split(" ")[1];
+  async (req: Request, res: Response, next: NextFunction) => {
+    const payload = verifyTokens(
+      res.locals.accessToken,
+      req.cookies.refreshToken,
+    );
 
-    const accessTokenPayload = verifyAccessToken(accessToken);
-    const refreshTokenPayload = verifyRefreshToken(refreshToken);
-
-    if (accessTokenPayload.sub !== refreshTokenPayload.sub) {
+    if (!payload) {
       res.clearCookie("refreshToken");
-      throw new BadTokensError("Invalid tokens: Token subjects don't match");
+      throw new BadTokensError("Invalid tokens: Token data doesn't match");
     }
 
-    const user = await getUserById(accessTokenPayload.sub!);
+    const { userId, workspaceId } = payload;
+
+    const user = await getUserWithIds(userId, workspaceId);
 
     if (!user) {
       res.clearCookie("refreshToken");
       throw new NotFoundError("User not found");
     }
 
-    req.user = user;
+    res.locals = { workspaceId, user, ...res.locals };
 
     next();
   },
