@@ -10,7 +10,7 @@ const getToken = (): Promise<AuthResponse> => {
 const queryOptions = {
   queryKey: ["auth"],
   queryFn: getToken,
-  refetchInterval: 1000 * 60,
+  refetchInterval: 1000 * 60 * 10,
 };
 
 export const authLoader = (queryClient: QueryClient) => () => {

@@ -14,6 +14,6 @@ export const ProtectedRoute = () => {
   return data?.isAuthenticated ? (
     <DashboardLayout />
   ) : (
-    <Navigate to="/auth/login" />
+    <Navigate to="/auth/login" replace={true} />
   );
 };

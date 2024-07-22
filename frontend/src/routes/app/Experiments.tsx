@@ -16,7 +16,7 @@ const data: Experiment[] = [
   },
 ];
 
-export default function ExperimentsPage() {
+export const ExperimentsPage = () => {
   // const data = await getData();
 
   return (
@@ -24,4 +24,4 @@ export default function ExperimentsPage() {
       <DataTable columns={columns} data={data} />
     </div>
   );
-}
+};

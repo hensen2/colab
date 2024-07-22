@@ -1,3 +1,3 @@
-export default function CalendarPage() {
+export const CalendarPage = () => {
   return <div>calendar</div>;
-}
+};

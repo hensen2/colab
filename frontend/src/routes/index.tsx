@@ -1,21 +1,8 @@
+import { createBrowserRouter } from "react-router-dom";
 import { authLoader } from "@/features/auth/api/useAuth";
 import { QueryClient } from "@tanstack/react-query";
-import { createBrowserRouter } from "react-router-dom";
-
-// Root Routes
+import { projectsLoader } from "@/features/projects/api/useProjects";
 import { default as ErrorPage } from "./ErrorPage";
-
-// Auth Routes
-import { default as LoginPage } from "./auth/Login";
-import { default as RegisterPage } from "./auth/Register";
-
-// App Routes
-import { default as HomePage } from "./app/Home";
-import { default as TeamsPage } from "./app/Teams";
-import { default as CalendarPage } from "./app/Calendar";
-import { default as ProjectsPage } from "./app/Projects";
-import { default as ProtocolsPage } from "./app/Protocols";
-import { default as ExperimentsPage } from "./app/Experiments";
 
 const createRouter = (queryClient: QueryClient) =>
   createBrowserRouter([
@@ -30,26 +17,60 @@ const createRouter = (queryClient: QueryClient) =>
       loader: authLoader(queryClient),
       errorElement: <ErrorPage />,
       children: [
-        { index: true, element: <HomePage /> },
+        {
+          index: true,
+          lazy: async () => {
+            const { HomePage } = await import("./app/Home");
+            return {
+              Component: HomePage,
+            };
+          },
+        },
         {
           path: "teams",
-          element: <TeamsPage />,
+          lazy: async () => {
+            const { TeamsPage } = await import("./app/Teams");
+            return {
+              Component: TeamsPage,
+            };
+          },
         },
         {
           path: "projects",
-          element: <ProjectsPage />,
+          lazy: async () => {
+            const { ProjectsPage } = await import("./app/Projects");
+            return {
+              Component: ProjectsPage,
+            };
+          },
+          loader: projectsLoader(queryClient),
         },
         {
           path: "calendar",
-          element: <CalendarPage />,
+          lazy: async () => {
+            const { CalendarPage } = await import("./app/Calendar");
+            return {
+              Component: CalendarPage,
+            };
+          },
         },
         {
           path: "experiments",
-          element: <ExperimentsPage />,
+          lazy: async () => {
+            const { ExperimentsPage } = await import("./app/Experiments");
+            return {
+              Component: ExperimentsPage,
+            };
+          },
         },
         {
           path: "protocols",
-          element: <ProtocolsPage />,
+          lazy: async () => {
+            const { ProtocolsPage } = await import("./app/Protocols");
+            return {
+              Component: ProtocolsPage,
+            };
+          },
         },
       ],
     },
@@ -65,11 +86,21 @@ const createRouter = (queryClient: QueryClient) =>
       children: [
         {
           path: "login",
-          element: <LoginPage />,
+          lazy: async () => {
+            const { LoginPage } = await import("./auth/Login");
+            return {
+              Component: LoginPage,
+            };
+          },
         },
         {
           path: "register",
-          element: <RegisterPage />,
+          lazy: async () => {
+            const { RegisterPage } = await import("./auth/Register");
+            return {
+              Component: RegisterPage,
+            };
+          },
         },
       ],
     },

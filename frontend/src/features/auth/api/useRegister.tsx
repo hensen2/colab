@@ -19,7 +19,6 @@ export function useRegister() {
     mutationFn: registerUser,
     onSuccess: (data) => {
       setToken(data);
-      // api.defaults.headers.common.Authorization = `Bearer ${data.accessToken}`;
     },
   });
 }

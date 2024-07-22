@@ -11,5 +11,9 @@ export const PublicRoute = () => {
     return <Spinner />;
   }
 
-  return data?.isAuthenticated ? <Navigate to="/" /> : <AuthLayout />;
+  return data?.isAuthenticated ? (
+    <Navigate to="/" replace={true} />
+  ) : (
+    <AuthLayout />
+  );
 };

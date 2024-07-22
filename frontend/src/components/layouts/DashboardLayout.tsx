@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import {
   Sheet,
   SheetContent,
@@ -7,39 +7,13 @@ import {
   SheetTrigger,
 } from "@/components/ui/Sheet";
 import { Menu } from "lucide-react";
-import { socket } from "@/lib/socket";
 import { Navbar, Header } from "@/components/blocks";
 import { Outlet } from "react-router-dom";
+import useWebSocket from "@/hooks/useWebSocket";
 
 export default function DashboardLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [isConnected, setIsConnected] = useState(socket.connected);
-
-  useEffect(() => {
-    socket.connect();
-
-    return () => {
-      socket.disconnect();
-    };
-  }, []);
-
-  useEffect(() => {
-    function onConnect() {
-      setIsConnected(true);
-    }
-
-    function onDisconnect() {
-      setIsConnected(false);
-    }
-
-    socket.on("connect", onConnect);
-    socket.on("disconnect", onDisconnect);
-
-    return () => {
-      socket.off("connect", onConnect);
-      socket.off("disconnect", onDisconnect);
-    };
-  }, []);
+  const { isConnected } = useWebSocket();
   console.log(isConnected);
 
   return (

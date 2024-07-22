@@ -2,7 +2,7 @@ import { useLogin } from "@/features/auth/api/useLogin";
 import { LoginForm } from "@/features/auth/components/LoginForm";
 import { Link } from "react-router-dom";
 
-export default function LoginPage() {
+export const LoginPage = () => {
   const { mutate: login } = useLogin();
   return (
     <>
@@ -21,4 +21,4 @@ export default function LoginPage() {
       </p>
     </>
   );
-}
+};

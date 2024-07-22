@@ -1,3 +1,3 @@
-export default function ProtocolsPage() {
+export const ProtocolsPage = () => {
   return <div>protocols</div>;
-}
+};
