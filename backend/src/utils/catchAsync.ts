@@ -6,7 +6,7 @@ type AsyncFunction = (
   next: NextFunction,
 ) => Promise<any>;
 
-export default (execution: AsyncFunction) =>
+export default (fn: AsyncFunction) =>
   (req: Request, res: Response, next: NextFunction) => {
-    execution(req, res, next).catch(next);
+    fn(req, res, next).catch(next);
   };

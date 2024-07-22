@@ -1,6 +1,5 @@
 import { ClientSession } from "mongoose";
-import { Workspace } from "./workspace.model";
-import { IWorkspace } from "./workspace.types";
+import { Workspace, IWorkspace } from "./";
 
 export const getWorkspaceById = async (id: string) => {
   return await Workspace.findById(id);

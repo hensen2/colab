@@ -36,6 +36,7 @@ const projectSchema = new Schema<IProject>(
 );
 
 projectSchema.index({ workspaceId: 1 });
+projectSchema.index({ _id: 1, workspaceId: 1 });
 
 projectSchema.set("toJSON", {
   flattenObjectIds: true,

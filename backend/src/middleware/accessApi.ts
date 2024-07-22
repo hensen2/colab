@@ -7,7 +7,7 @@ import catchAsync from "../utils/catchAsync";
 const accessApi = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
     const payload = verifyTokens(
-      res.locals.accessToken,
+      req.headers.authorization!,
       req.cookies.refreshToken,
     );
 

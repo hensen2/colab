@@ -1,13 +1,22 @@
 import express from "express";
-import authRouter from "../auth";
-import apiRouter from "../api";
+import validate from "../middleware/validate";
+import accessApi from "../middleware/accessApi";
+import userRouter from "./users";
+import { accessSchema, refreshSchema } from "../auth/auth.validation";
+import { RequestSource } from "../types/request.types";
+import projectRouter from "./projects/project.router";
 
-const router = express.Router();
+const apiRouter = express.Router();
 
-// Public routes
-router.use("/auth", authRouter);
+// validate and verify jwt tokens for api access
+apiRouter.use(
+  validate(refreshSchema, RequestSource.COOKIE),
+  validate(accessSchema, RequestSource.HEADER),
+  accessApi,
+);
 
-// Private routes
-router.use("/api", apiRouter);
+// api routes
+apiRouter.use("/users", userRouter);
+apiRouter.use("/projects", projectRouter);
 
-export default router;
+export default apiRouter;

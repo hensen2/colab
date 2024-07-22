@@ -73,7 +73,7 @@ export const register = catchAsync(async (req: Request, res: Response) => {
         lastName,
         email,
         passwordHash,
-        workspace: workspace.id,
+        workspaceId: workspace.id,
       },
       { session },
     );
@@ -121,7 +121,10 @@ export const login = catchAsync(async (req: Request, res: Response) => {
     throw new AuthFailureError("Invalid password attempt");
   }
 
-  const { accessToken, refreshToken } = generateTokens(user.id, user.workspace);
+  const { accessToken, refreshToken } = generateTokens(
+    user.id,
+    user.workspaceId,
+  );
 
   res.cookie("refreshToken", refreshToken, {
     httpOnly: true,
@@ -132,7 +135,7 @@ export const login = catchAsync(async (req: Request, res: Response) => {
     type: StatusType.SUCCESS,
     message: "User logged in",
     accessToken,
-    workspaceId: user.workspace,
+    workspaceId: user.workspaceId,
     user,
     isAuthenticated: true,
   });

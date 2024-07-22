@@ -1,5 +1,5 @@
 import { model, Schema } from "mongoose";
-import { IWorkspace } from "./workspace.types";
+import { IWorkspace } from "./";
 
 const workspaceSchema = new Schema<IWorkspace>(
   {
@@ -29,6 +29,7 @@ workspaceSchema.set("toJSON", {
   flattenObjectIds: true,
   transform: (_doc, workspace) => {
     workspace.id = workspace._id;
+
     delete workspace._id;
     delete workspace.createdBy;
     delete workspace.updatedAt;

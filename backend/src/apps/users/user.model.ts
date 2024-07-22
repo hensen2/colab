@@ -12,7 +12,7 @@ const userSchema = new Schema<IUser>(
       lowercase: true,
       required: true,
     },
-    workspace: {
+    workspaceId: {
       type: Schema.Types.ObjectId,
       required: true,
     },
@@ -45,7 +45,7 @@ const userSchema = new Schema<IUser>(
   },
 );
 
-userSchema.index({ _id: 1, workspace: 1 });
+userSchema.index({ _id: 1, workspaceId: 1 });
 
 userSchema.set("toJSON", {
   flattenObjectIds: true,
@@ -58,7 +58,7 @@ userSchema.set("toJSON", {
     delete user.firstName;
     delete user.lastName;
     delete user.passwordHash;
-    delete user.workspace;
+    delete user.workspaceId;
     delete user.updatedAt;
     delete user.createdAt;
     return user;

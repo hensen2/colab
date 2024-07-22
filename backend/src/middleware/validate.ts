@@ -27,7 +27,7 @@ const validate =
 
     // if base route is '/api' and auth headers correct, set req data
     if (req.baseUrl === "/api" && value.authorization) {
-      res.locals.accessToken = value.authorization;
+      req.headers.authorization = value.authorization;
     }
 
     next();

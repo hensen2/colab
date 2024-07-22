@@ -6,8 +6,8 @@ export const getUserById = async (id: string) => {
   return await User.findById(id);
 };
 
-export const getUserWithIds = async (_id: string, workspace: string) => {
-  return await User.findOne({ _id, workspace });
+export const getUserWithIds = async (_id: string, workspaceId: string) => {
+  return await User.findOne({ _id, workspaceId });
 };
 
 export const getUserByEmail = async (email: string) => {

@@ -1,7 +1,7 @@
 import express from "express";
 import cookieParser from "cookie-parser";
 import cors from "cors";
-import router from "./apps";
+import router from "./lib/router";
 import morgan from "./middleware/morgan";
 import { clientURL, cookieSecret } from "./lib/config";
 import errorHandler from "./middleware/errorHandler";
