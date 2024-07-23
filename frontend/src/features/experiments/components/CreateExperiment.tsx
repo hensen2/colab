@@ -7,10 +7,10 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/Sheet";
-import ProjectForm from "./ProjectForm";
+import ExperimentForm from "./ExperimentForm";
 import { useState } from "react";
 
-export default function CreateProject() {
+export default function CreateExperiment() {
   const [open, setOpen] = useState(false);
 
   return (
@@ -25,12 +25,12 @@ export default function CreateProject() {
       </SheetTrigger>
       <SheetContent side="center">
         <SheetHeader>
-          <SheetTitle>Create project</SheetTitle>
+          <SheetTitle>Create experiment</SheetTitle>
           <SheetDescription>
-            {"Enter the details for your new project."}
+            {"Enter the details for your new experiment."}
           </SheetDescription>
         </SheetHeader>
-        <ProjectForm setOpen={setOpen} />
+        <ExperimentForm setOpen={setOpen} />
       </SheetContent>
     </Sheet>
   );

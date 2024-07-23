@@ -6,11 +6,10 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/Breadcrumb";
-// import CreateProject from "@/features/projects/components/CreateProject";
 import { Link, useLocation } from "react-router-dom";
 import { Fragment } from "react/jsx-runtime";
 
-export default function Header() {
+export default function PageHeader() {
   const { pathname } = useLocation();
 
   // extract relative paths as array of strings
@@ -50,24 +49,6 @@ export default function Header() {
           </BreadcrumbList>
         </Breadcrumb>
       </div>
-      {/* {!relativePaths ? null : (
-        <div className="mb-4 mt-3 md:flex md:items-center md:justify-between">
-          <div className="min-w-0 flex-1">
-            <h2 className="text-2xl font-bold capitalize leading-7 text-gray-900 sm:truncate sm:text-3xl">
-              {pathLength === 1 ? `all ${relativePaths[0]}` : `Project name`}
-            </h2>
-          </div>
-          <div className="mt-4 flex flex-shrink-0 md:ml-4 md:mt-0">
-            <button
-              type="button"
-              className="inline-flex items-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
-            >
-              Edit
-            </button>
-            <CreateProject />
-          </div>
-        </div>
-      )} */}
     </div>
   );
 }

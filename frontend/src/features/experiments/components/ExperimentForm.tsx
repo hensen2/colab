@@ -12,7 +12,7 @@ import {
   FormMessage,
 } from "@/components/ui/Form";
 import { Input } from "@/components/ui/Input";
-import { useCreateProject } from "../api/useCreateProject";
+import { useCreateExperiment } from "../api/useCreateExperiment";
 import { Dispatch, SetStateAction } from "react";
 import { Textarea } from "@/components/ui/Textarea";
 
@@ -34,7 +34,7 @@ interface ProjectFormProps {
 }
 
 export default function ProjectForm({ setOpen }: ProjectFormProps) {
-  const { mutate: createProject } = useCreateProject();
+  const { mutate: createExperiment } = useCreateExperiment();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -45,7 +45,7 @@ export default function ProjectForm({ setOpen }: ProjectFormProps) {
   });
 
   function onSubmit(values: z.infer<typeof formSchema>) {
-    createProject(values, {
+    createExperiment(values, {
       onSuccess: () => {
         form.reset();
         setOpen(false);
@@ -65,7 +65,7 @@ export default function ProjectForm({ setOpen }: ProjectFormProps) {
           name="name"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Project name</FormLabel>
+              <FormLabel>Experiment name</FormLabel>
               <FormControl>
                 <Input {...field} />
               </FormControl>
@@ -90,7 +90,7 @@ export default function ProjectForm({ setOpen }: ProjectFormProps) {
           type="submit"
           className="inline-flex bg-indigo-600 text-white hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
         >
-          Create project
+          Create experiment
         </Button>
       </form>
     </Form>

@@ -1,7 +1,7 @@
 import { model, Schema } from "mongoose";
-import { IProject } from "./project.types";
+import { IExperiment } from "./";
 
-const projectSchema = new Schema<IProject>(
+const experimentSchema = new Schema<IExperiment>(
   {
     name: {
       type: String,
@@ -29,7 +29,9 @@ const projectSchema = new Schema<IProject>(
       type: Schema.Types.ObjectId,
       required: true,
     },
-    experiments: [{ type: Schema.Types.ObjectId, ref: "Experiment" }],
+    projectId: {
+      type: Schema.Types.ObjectId,
+    },
   },
   {
     versionKey: false,
@@ -37,18 +39,18 @@ const projectSchema = new Schema<IProject>(
   },
 );
 
-projectSchema.index({ workspaceId: 1 });
-projectSchema.index({ _id: 1, workspaceId: 1 });
+experimentSchema.index({ workspaceId: 1 });
+experimentSchema.index({ _id: 1, workspaceId: 1 });
 
-projectSchema.set("toJSON", {
+experimentSchema.set("toJSON", {
   flattenObjectIds: true,
-  transform: (_doc, project) => {
-    project.id = project._id;
-    delete project._id;
-    delete project.workspaceId;
-    delete project.createdAt;
-    return project;
+  transform: (_doc, experiment) => {
+    experiment.id = experiment._id;
+    delete experiment._id;
+    delete experiment.workspaceId;
+    delete experiment.createdAt;
+    return experiment;
   },
 });
 
-export const Project = model<IProject>("Project", projectSchema);
+export const Experiment = model<IExperiment>("Experiment", experimentSchema);

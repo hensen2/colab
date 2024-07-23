@@ -1,14 +1,14 @@
 import { Document, Types } from "mongoose";
 
-export interface IProject {
+export interface IExperiment {
   name: string;
   description?: string;
   createdBy: string;
   workspaceId: Types.ObjectId;
-  experiments: Types.ObjectId[];
+  projectId?: Types.ObjectId;
 }
 
-export type ProjectDoc = Document<unknown, {}, IProject> &
-  IProject & {
+export type ExperimentDox = Document<unknown, {}, IExperiment> &
+  IExperiment & {
     _id: Types.ObjectId;
   };

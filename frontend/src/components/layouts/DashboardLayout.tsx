@@ -7,7 +7,7 @@ import {
   SheetTrigger,
 } from "@/components/ui/Sheet";
 import { Menu } from "lucide-react";
-import { Navbar, Header } from "@/components/blocks";
+import { Navbar, PageHeader } from "@/components/blocks";
 import { Outlet } from "react-router-dom";
 import useWebSocket from "@/hooks/useWebSocket";
 
@@ -69,7 +69,7 @@ export default function DashboardLayout() {
 
         <main className="h-screen pb-8 lg:pl-72">
           <div className="flex h-full flex-col px-4 sm:px-6 lg:px-8">
-            <Header />
+            <PageHeader />
             <Outlet />
           </div>
         </main>

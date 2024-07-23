@@ -11,6 +11,7 @@ export const api = axios.create({
     "Content-Type": "application/json",
   },
 });
+console.log(api.defaults);
 
 api.interceptors.request.use(
   (config) => config,

@@ -16,6 +16,11 @@ const userSchema = new Schema<IUser>(
       type: Schema.Types.ObjectId,
       required: true,
     },
+    role: {
+      type: String,
+      enum: ["admin", "user"],
+      default: "admin",
+    },
     firstName: {
       type: String,
       minlength: 1,
@@ -46,6 +51,7 @@ const userSchema = new Schema<IUser>(
 );
 
 userSchema.index({ _id: 1, workspaceId: 1 });
+userSchema.index({ projects: 1 });
 
 userSchema.set("toJSON", {
   flattenObjectIds: true,

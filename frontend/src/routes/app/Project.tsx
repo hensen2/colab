@@ -1,17 +1,21 @@
-import { columns } from "@/features/experiments/components/ExperimentColumns";
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+import { columns } from "@/features/projects/components/ProjectColumns";
 import { DataTable } from "@/components/blocks";
-import CreateExperiment from "@/features/experiments/components/CreateExperiment";
-import { useExperiments } from "@/features/experiments/api/useExperiments";
+import CreateProject from "@/features/projects/components/CreateProject";
+import { useProject } from "@/features/projects/api/useProject";
+import { useLocation } from "react-router-dom";
+import { IProject } from "@/types/api.types";
 
-export const ExperimentsPage = () => {
-  const { data } = useExperiments();
+export const ProjectPage = () => {
+  const { state: project }: { state: IProject } = useLocation();
+  const { data } = useProject(project.id);
 
   return (
     <>
       <div className="mb-4 mt-3 md:flex md:items-center md:justify-between">
         <div className="min-w-0 flex-1">
           <h2 className="text-2xl font-bold capitalize leading-7 text-gray-900 sm:truncate sm:text-3xl">
-            All Experiments
+            {project.name}
           </h2>
         </div>
         <div className="mt-4 flex flex-shrink-0 md:ml-4 md:mt-0">
@@ -21,11 +25,13 @@ export const ExperimentsPage = () => {
           >
             Edit
           </button>
-          <CreateExperiment />
+          <CreateProject />
         </div>
       </div>
       <div className="w-full pb-10">
-        {data && <DataTable columns={columns} data={data.experiments} />}
+        {data && (
+          <DataTable columns={columns} data={data.project.experiments} />
+        )}
       </div>
     </>
   );

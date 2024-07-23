@@ -74,6 +74,7 @@ export const register = catchAsync(async (req: Request, res: Response) => {
         email,
         passwordHash,
         workspaceId: workspace.id,
+        role: "admin",
       },
       { session },
     );

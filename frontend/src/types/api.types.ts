@@ -1,3 +1,28 @@
+export interface IBaseResponse {
+  type: string;
+  message: string;
+}
+
+export interface IAuthResponse extends IBaseResponse {
+  accessToken: string;
+  isAuthenticated: boolean;
+}
+
+export interface IUser {
+  email: string;
+  name: string;
+  role: "admin" | "user";
+  avatarUrl?: string;
+}
+
+export interface IUserResponse extends IBaseResponse {
+  user: IUser;
+}
+
+// export interface IWorkspace {
+
+// }
+
 export interface AuthResponse {
   type: string;
   message: string;
@@ -28,11 +53,16 @@ export interface UserResponse {
 }
 
 export interface IProject {
+  id: string;
   name: string;
   description: string;
   createdBy: string;
   updatedAt: Date;
-  createdAt: Date;
+  experiments: IExperiment[];
+}
+
+export interface IProjectResponse {
+  project: IProject;
 }
 
 export interface ICreateProject {
@@ -42,4 +72,21 @@ export interface ICreateProject {
 
 export interface IProjectsResponse {
   projects: IProject[];
+}
+
+export interface IExperiment {
+  id: string;
+  name: string;
+  description: string;
+  createdBy: string;
+  updatedAt: Date;
+}
+
+export interface ICreateExperiment {
+  name: string;
+  description?: string;
+}
+
+export interface IExperimentsResponse {
+  experiments: IExperiment[];
 }

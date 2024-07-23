@@ -3,6 +3,7 @@ import { authLoader } from "@/features/auth/api/useAuth";
 import { QueryClient } from "@tanstack/react-query";
 import { projectsLoader } from "@/features/projects/api/useProjects";
 import { default as ErrorPage } from "./ErrorPage";
+import { experimentsLoader } from "@/features/experiments/api/useExperiments";
 
 const createRouter = (queryClient: QueryClient) =>
   createBrowserRouter([
@@ -46,6 +47,15 @@ const createRouter = (queryClient: QueryClient) =>
           loader: projectsLoader(queryClient),
         },
         {
+          path: "projects/:projectId",
+          lazy: async () => {
+            const { ProjectPage } = await import("./app/Project");
+            return {
+              Component: ProjectPage,
+            };
+          },
+        },
+        {
           path: "calendar",
           lazy: async () => {
             const { CalendarPage } = await import("./app/Calendar");
@@ -62,6 +72,7 @@ const createRouter = (queryClient: QueryClient) =>
               Component: ExperimentsPage,
             };
           },
+          loader: experimentsLoader(queryClient),
         },
         {
           path: "protocols",

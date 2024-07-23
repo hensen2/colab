@@ -25,7 +25,7 @@ const accessApi = catchAsync(
       throw new NotFoundError("User not found");
     }
 
-    res.locals = { workspaceId, user, ...res.locals };
+    res.locals = { workspaceId, user };
 
     next();
   },
