@@ -18,9 +18,9 @@ export default function MenuItem({
     <button
       className={cn(
         isActive?.()
-          ? "bg-gray-200 text-indigo-600"
-          : "text-gray-500 hover:bg-gray-200 hover:text-indigo-600",
-        "group mr-2 flex h-9 w-9 cursor-pointer items-center justify-center rounded-md p-1",
+          ? "bg-gray-100 text-indigo-600"
+          : "text-gray-500 hover:bg-gray-100 hover:text-indigo-600",
+        "group mr-2 flex size-7 cursor-pointer items-center justify-center rounded-md p-1",
       )}
       onClick={action}
       title={title}
@@ -28,9 +28,9 @@ export default function MenuItem({
       <Icon
         className={cn(
           isActive?.()
-            ? "bg-gray-200 text-indigo-600"
-            : "text-gray-500 hover:bg-gray-200 group-hover:text-indigo-600",
-          "h-6 w-6 shrink-0",
+            ? "bg-gray-100 text-indigo-600"
+            : "text-gray-500 hover:bg-gray-100 group-hover:text-indigo-600",
+          "size-5 shrink-0",
         )}
         aria-hidden="true"
         strokeWidth={1.6}

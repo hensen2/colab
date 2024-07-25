@@ -21,6 +21,7 @@ import {
   Undo2,
   WrapText,
 } from "lucide-react";
+import { Separator } from "@/components/ui/Separator";
 
 export default function MenuBar({ editor }: { editor: Editor }) {
   const items = [
@@ -142,11 +143,11 @@ export default function MenuBar({ editor }: { editor: Editor }) {
   ];
 
   return (
-    <div className="flex flex-[0_0_auto] flex-wrap items-center rounded-t-lg border-b border-gray-600 px-4 py-5 sm:px-5">
+    <div className="flex flex-[0_0_auto] flex-wrap items-center gap-3 rounded-t-lg border-b border-gray-600 px-4 py-2 sm:px-5">
       {items.map((item, index) => (
         <Fragment key={index}>
           {item.type === "divider" ? (
-            <div className="ml-2 mr-4 h-7 w-[3px] bg-indigo-600" />
+            <Separator orientation="vertical" className="mx-1 h-7" />
           ) : (
             <MenuItem {...item} />
           )}

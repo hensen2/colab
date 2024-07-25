@@ -1,10 +1,10 @@
 import { api } from "@/lib/api";
-import { ICreateExperiment, IExperimentsResponse } from "@/types/api.types";
+import { ICreateExperimentData, IExperimentsResponse } from "@/types/api.types";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useCallback } from "react";
 
 export const createExperiment = (
-  data: ICreateExperiment,
+  data: ICreateExperimentData,
 ): Promise<IExperimentsResponse> => {
   return api.post("/api/experiments", { ...data });
 };

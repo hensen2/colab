@@ -1,10 +1,10 @@
 import { Request, NextFunction, Response } from "express";
 import { verifyTokens } from "../lib/tokens";
 import { BadTokensError, NotFoundError } from "../lib/appError";
-import { getUserWithIds } from "../apps/users";
+import { getUserWithTokenData } from "../apps/users";
 import catchAsync from "../utils/catchAsync";
 
-const accessApi = catchAsync(
+const authenticate = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
     const payload = verifyTokens(
       req.headers.authorization!,
@@ -12,23 +12,23 @@ const accessApi = catchAsync(
     );
 
     if (!payload) {
-      res.clearCookie("refreshToken");
+      res.clearCookie("refreshToken").clearCookie("accessToken");
       throw new BadTokensError("Invalid tokens: Token data doesn't match");
     }
 
-    const { userId, workspaceId } = payload;
+    const { userId, workspaceId, role } = payload;
 
-    const user = await getUserWithIds(userId, workspaceId);
+    const user = await getUserWithTokenData(userId, workspaceId, role);
 
     if (!user) {
-      res.clearCookie("refreshToken");
+      res.clearCookie("refreshToken").clearCookie("accessToken");
       throw new NotFoundError("User not found");
     }
 
-    res.locals = { workspaceId, user };
+    res.locals = { workspaceId, user, role };
 
     next();
   },
 );
 
-export default accessApi;
+export default authenticate;

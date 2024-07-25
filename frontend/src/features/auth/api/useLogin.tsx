@@ -1,9 +1,9 @@
 import { api } from "@/lib/api";
-import { AuthResponse, LoginUser } from "@/types/api.types";
+import { IAuthResponse, ILoginUserData } from "@/types/api.types";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useCallback } from "react";
 
-export const loginUser = (data: LoginUser): Promise<AuthResponse> => {
+export const loginUser = (data: ILoginUserData): Promise<IAuthResponse> => {
   return api.post("/auth/login", { ...data });
 };
 
@@ -11,7 +11,7 @@ export function useLogin() {
   const queryClient = useQueryClient();
 
   const setToken = useCallback(
-    (data: AuthResponse) => queryClient.setQueryData(["auth"], data),
+    (data: IAuthResponse) => queryClient.setQueryData(["auth"], data),
     [queryClient],
   );
 

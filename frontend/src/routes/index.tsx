@@ -75,6 +75,15 @@ const createRouter = (queryClient: QueryClient) =>
           loader: experimentsLoader(queryClient),
         },
         {
+          path: "experiments/:experimentId",
+          lazy: async () => {
+            const { ExperimentPage } = await import("./app/Experiment");
+            return {
+              Component: ExperimentPage,
+            };
+          },
+        },
+        {
           path: "protocols",
           lazy: async () => {
             const { ProtocolsPage } = await import("./app/Protocols");

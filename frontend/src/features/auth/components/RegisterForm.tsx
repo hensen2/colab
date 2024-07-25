@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/Form";
 import { Input } from "@/components/ui/Input";
 import { UseMutateFunction } from "@tanstack/react-query";
-import { AuthResponse, RegisterUser } from "@/types/api.types";
+import { IAuthResponse, IRegisterUserData } from "@/types/api.types";
 import { useNavigate } from "react-router-dom";
 
 const formSchema = z.object({
@@ -30,7 +30,7 @@ const formSchema = z.object({
 export function RegisterForm({
   register,
 }: {
-  register: UseMutateFunction<AuthResponse, Error, RegisterUser, unknown>;
+  register: UseMutateFunction<IAuthResponse, Error, IRegisterUserData, unknown>;
 }) {
   const navigate = useNavigate();
 

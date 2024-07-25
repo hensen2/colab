@@ -4,14 +4,14 @@ import { useAuth } from "@/features/auth/api/useAuth";
 import { Navigate, useNavigation } from "react-router-dom";
 
 export const PublicRoute = () => {
-  const { data } = useAuth();
+  const auth = useAuth();
   const navigation = useNavigation();
 
-  if (navigation.state === "loading") {
+  if (!auth.data && navigation.state === "loading") {
     return <Spinner />;
   }
 
-  return data?.isAuthenticated ? (
+  return auth.data?.isAuthenticated ? (
     <Navigate to="/" replace={true} />
   ) : (
     <AuthLayout />

@@ -10,6 +10,7 @@ const errorHandler = (
 ) => {
   // log error first
   logger.error(err);
+  console.log(err.stack);
 
   // if error encountered after writing response to client, send error to default express handler
   if (res.headersSent) {

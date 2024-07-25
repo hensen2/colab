@@ -11,7 +11,6 @@ export const api = axios.create({
     "Content-Type": "application/json",
   },
 });
-console.log(api.defaults);
 
 api.interceptors.request.use(
   (config) => config,
@@ -23,7 +22,6 @@ api.interceptors.response.use(
     if (response.data?.accessToken) {
       api.defaults.headers.common.Authorization = `Bearer ${response.data.accessToken}`;
     }
-
     return response.data;
   },
   (error) => Promise.reject(error),

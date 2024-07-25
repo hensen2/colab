@@ -1,16 +1,17 @@
 import { api } from "@/lib/api";
-import { UserResponse } from "@/types/api.types";
+import { IUserResponse } from "@/types/api.types";
 import { useQuery } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 
-export const getUser = (): Promise<UserResponse> => {
+export const getUser = (): Promise<IUserResponse> => {
   return api.get("/api/users");
 };
 
-export function useUser(isAccessToken: boolean) {
-  return useQuery<UserResponse, AxiosError>({
+export function useUser(isAuthenticated: boolean) {
+  return useQuery<IUserResponse, AxiosError>({
     queryKey: ["user"],
     queryFn: getUser,
-    enabled: isAccessToken,
+    enabled: isAuthenticated,
+    retry: false,
   });
 }

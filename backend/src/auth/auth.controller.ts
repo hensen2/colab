@@ -17,6 +17,10 @@ import { StatusCode, StatusType } from "../types/response.types";
 import { createWorkspace } from "../apps/workspaces";
 import { runTransaction } from "../db/runTransaction";
 
+// For expiring cookies in the browser
+const oneHourMs = 3600000;
+const oneDayMs = 86400000;
+
 export const getToken = catchAsync(async (req: Request, res: Response) => {
   const { userId, workspaceId } = verifyRefreshToken(req.cookies.refreshToken);
 
@@ -27,16 +31,21 @@ export const getToken = catchAsync(async (req: Request, res: Response) => {
     throw new NotFoundError("User not found");
   }
 
-  const accessToken = generateAccessToken(userId, workspaceId);
+  const accessToken = generateAccessToken(userId, workspaceId, user.role);
 
-  return res.status(StatusCode.SUCCESS).json({
-    type: StatusType.SUCCESS,
-    message: "Authenticated",
-    accessToken,
-    workspaceId,
-    user,
-    isAuthenticated: true,
-  });
+  return res
+    .status(StatusCode.SUCCESS)
+    .cookie("accessToken", accessToken, {
+      httpOnly: true,
+      path: "/",
+      maxAge: oneHourMs, // expires cookie in 1h
+    })
+    .json({
+      type: StatusType.SUCCESS,
+      message: "Authenticated",
+      accessToken,
+      isAuthenticated: true,
+    });
 });
 
 export const register = catchAsync(async (req: Request, res: Response) => {
@@ -90,21 +99,30 @@ export const register = catchAsync(async (req: Request, res: Response) => {
 
   const { user, workspaceId } = res.locals;
 
-  const { accessToken, refreshToken } = generateTokens(user.id, workspaceId);
-
-  res.cookie("refreshToken", refreshToken, {
-    httpOnly: true,
-    path: "/",
-  });
-
-  return res.status(StatusCode.SUCCESS).json({
-    type: StatusType.SUCCESS,
-    message: "User account created",
-    accessToken,
+  const { accessToken, refreshToken } = generateTokens(
+    user.id,
     workspaceId,
-    user,
-    isAuthenticated: true,
-  });
+    user.role,
+  );
+
+  return res
+    .status(StatusCode.SUCCESS)
+    .cookie("refreshToken", refreshToken, {
+      httpOnly: true,
+      path: "/",
+      maxAge: oneDayMs, // expires cookie in 1d
+    })
+    .cookie("accessToken", accessToken, {
+      httpOnly: true,
+      path: "/",
+      maxAge: oneHourMs, // expires cookie in 1h
+    })
+    .json({
+      type: StatusType.SUCCESS,
+      message: "User account created",
+      accessToken,
+      isAuthenticated: true,
+    });
 });
 
 export const login = catchAsync(async (req: Request, res: Response) => {
@@ -125,32 +143,38 @@ export const login = catchAsync(async (req: Request, res: Response) => {
   const { accessToken, refreshToken } = generateTokens(
     user.id,
     user.workspaceId,
+    user.role,
   );
 
-  res.cookie("refreshToken", refreshToken, {
-    httpOnly: true,
-    path: "/",
-  });
-
-  return res.status(StatusCode.SUCCESS).json({
-    type: StatusType.SUCCESS,
-    message: "User logged in",
-    accessToken,
-    workspaceId: user.workspaceId,
-    user,
-    isAuthenticated: true,
-  });
+  return res
+    .status(StatusCode.SUCCESS)
+    .cookie("refreshToken", refreshToken, {
+      httpOnly: true,
+      path: "/",
+      maxAge: oneDayMs, // expires cookie in 1d
+    })
+    .cookie("accessToken", accessToken, {
+      httpOnly: true,
+      path: "/",
+      maxAge: oneHourMs, // expires cookie in 1h
+    })
+    .json({
+      type: StatusType.SUCCESS,
+      message: "User logged in",
+      accessToken,
+      isAuthenticated: true,
+    });
 });
 
 export const logout = (_req: Request, res: Response) => {
-  res.clearCookie("refreshToken");
-
-  return res.status(StatusCode.SUCCESS).json({
-    type: StatusType.SUCCESS,
-    message: "User logged out",
-    accessToken: null,
-    workspaceId: null,
-    user: null,
-    isAuthenticated: false,
-  });
+  return res
+    .status(StatusCode.SUCCESS)
+    .clearCookie("refreshToken")
+    .clearCookie("accessToken")
+    .json({
+      type: StatusType.SUCCESS,
+      message: "User logged out",
+      accessToken: null,
+      isAuthenticated: false,
+    });
 };

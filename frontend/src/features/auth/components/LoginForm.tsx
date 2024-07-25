@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/Form";
 import { Input } from "@/components/ui/Input";
 import { UseMutateFunction } from "@tanstack/react-query";
-import { AuthResponse, LoginUser } from "@/types/api.types";
+import { IAuthResponse, ILoginUserData } from "@/types/api.types";
 import { useNavigate } from "react-router-dom";
 
 const formSchema = z.object({
@@ -24,7 +24,7 @@ const formSchema = z.object({
 export function LoginForm({
   login,
 }: {
-  login: UseMutateFunction<AuthResponse, Error, LoginUser, unknown>;
+  login: UseMutateFunction<IAuthResponse, Error, ILoginUserData, unknown>;
 }) {
   const navigate = useNavigate();
 

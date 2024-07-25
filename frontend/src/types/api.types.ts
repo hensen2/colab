@@ -19,37 +19,33 @@ export interface IUserResponse extends IBaseResponse {
   user: IUser;
 }
 
-// export interface IWorkspace {
-
-// }
-
-export interface AuthResponse {
-  type: string;
-  message: string;
-  accessToken: string | null;
-  workspaceId: string | null;
-  user: {
-    email: string;
-    name: string;
-  } | null;
-  isAuthenticated: boolean;
-}
-
-export interface LoginUser {
+export interface ILoginUserData {
   email: string;
   password: string;
 }
 
-export interface RegisterUser {
+export interface IRegisterUserData {
   firstName: string;
   lastName: string;
   email: string;
   password: string;
 }
 
-export interface UserResponse {
+export interface IExperiment {
+  id: string;
   name: string;
-  email: string;
+  description: string;
+  createdBy: string;
+  updatedAt: Date;
+}
+
+export interface IExperimentsResponse {
+  experiments: IExperiment[];
+}
+
+export interface ICreateExperimentData {
+  name: string;
+  description?: string;
 }
 
 export interface IProject {
@@ -61,32 +57,15 @@ export interface IProject {
   experiments: IExperiment[];
 }
 
-export interface IProjectResponse {
-  project: IProject;
-}
-
-export interface ICreateProject {
-  name: string;
-  description?: string;
-}
-
 export interface IProjectsResponse {
   projects: IProject[];
 }
 
-export interface IExperiment {
-  id: string;
-  name: string;
-  description: string;
-  createdBy: string;
-  updatedAt: Date;
+export interface IProjectResponse {
+  project: IProject;
 }
 
-export interface ICreateExperiment {
+export interface ICreateProjectData {
   name: string;
   description?: string;
-}
-
-export interface IExperimentsResponse {
-  experiments: IExperiment[];
 }

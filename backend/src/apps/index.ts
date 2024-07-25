@@ -1,6 +1,6 @@
 import express from "express";
 import validate from "../middleware/validate";
-import accessApi from "../middleware/accessApi";
+import authenticate from "../middleware/authenticate";
 import userRouter from "./users";
 import { accessSchema, refreshSchema } from "../auth/auth.validation";
 import { RequestSource } from "../types/request.types";
@@ -13,7 +13,7 @@ const apiRouter = express.Router();
 apiRouter.use(
   validate(refreshSchema, RequestSource.COOKIE),
   validate(accessSchema, RequestSource.HEADER),
-  accessApi,
+  authenticate,
 );
 
 // api routes

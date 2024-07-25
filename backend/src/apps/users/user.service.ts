@@ -10,6 +10,14 @@ export const getUserWithIds = async (_id: string, workspaceId: string) => {
   return await User.findOne({ _id, workspaceId });
 };
 
+export const getUserWithTokenData = async (
+  _id: string,
+  workspaceId: string,
+  role: "admin" | "user",
+) => {
+  return await User.findOne({ _id, workspaceId, role });
+};
+
 export const getUserByEmail = async (email: string) => {
   return await User.findOne({ email });
 };

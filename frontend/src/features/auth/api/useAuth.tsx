@@ -1,9 +1,9 @@
 import { api } from "@/lib/api";
-import { AuthResponse } from "@/types/api.types";
+import { IAuthResponse } from "@/types/api.types";
 import { QueryClient, useQuery } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 
-const getToken = (): Promise<AuthResponse> => {
+export const getToken = async (): Promise<IAuthResponse> => {
   return api.get("/auth");
 };
 
@@ -13,13 +13,10 @@ const queryOptions = {
   refetchInterval: 1000 * 60 * 10,
 };
 
-export const authLoader = (queryClient: QueryClient) => () => {
-  return (
-    queryClient.getQueryData(queryOptions.queryKey) ??
-    queryClient.fetchQuery(queryOptions)
-  );
+export const authLoader = (queryClient: QueryClient) => async () => {
+  return await queryClient.ensureQueryData(queryOptions);
 };
 
 export function useAuth() {
-  return useQuery<AuthResponse, AxiosError>(queryOptions);
+  return useQuery<IAuthResponse, AxiosError>(queryOptions);
 }

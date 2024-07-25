@@ -5,6 +5,7 @@ import { AccessTokenError, RefreshTokenError } from "./appError";
 
 export interface ITokenPayload extends JwtPayload {
   workspaceId?: string;
+  role?: "admin" | "user";
 }
 
 const { accessKey, refreshKey, issuer, audience } = tokenInfo;
@@ -18,12 +19,17 @@ export const verifyAccessToken = (accessToken: string) => {
   if (
     !payload.sub ||
     !payload.workspaceId ||
+    !payload.role ||
     !isObjectIdOrHexString(payload.sub) ||
     !isObjectIdOrHexString(payload.workspaceId)
   ) {
     throw new AccessTokenError();
   } else {
-    return { userId: payload.sub, workspaceId: payload.workspaceId };
+    return {
+      userId: payload.sub,
+      workspaceId: payload.workspaceId,
+      role: payload.role,
+    };
   }
 };
 
@@ -36,12 +42,17 @@ export const verifyRefreshToken = (refreshToken: string) => {
   if (
     !payload.sub ||
     !payload.workspaceId ||
+    !payload.role ||
     !isObjectIdOrHexString(payload.sub) ||
     !isObjectIdOrHexString(payload.workspaceId)
   ) {
     throw new RefreshTokenError();
   } else {
-    return { userId: payload.sub, workspaceId: payload.workspaceId };
+    return {
+      userId: payload.sub,
+      workspaceId: payload.workspaceId,
+      role: payload.role,
+    };
   }
 };
 
@@ -51,19 +62,25 @@ export const verifyTokens = (accessToken: string, refreshToken: string) => {
 
   if (
     aPayload.userId !== rPayload.userId ||
-    aPayload.workspaceId !== rPayload.workspaceId
+    aPayload.workspaceId !== rPayload.workspaceId ||
+    aPayload.role !== rPayload.role
   ) {
     return null;
   } else {
-    return { userId: aPayload.userId, workspaceId: aPayload.workspaceId };
+    return {
+      userId: aPayload.userId,
+      workspaceId: aPayload.workspaceId,
+      role: aPayload.role,
+    };
   }
 };
 
 export const generateAccessToken = (
   userId: string,
   workspaceId: string | Types.ObjectId,
+  role: "admin" | "user",
 ) => {
-  return jwt.sign({ workspaceId }, accessKey, {
+  return jwt.sign({ workspaceId, role }, accessKey, {
     expiresIn: "1h",
     subject: userId,
     audience,
@@ -74,8 +91,9 @@ export const generateAccessToken = (
 export const generateRefreshToken = (
   userId: string,
   workspaceId: string | Types.ObjectId,
+  role: "admin" | "user",
 ) => {
-  return jwt.sign({ workspaceId }, refreshKey, {
+  return jwt.sign({ workspaceId, role }, refreshKey, {
     expiresIn: "1d",
     subject: userId,
     audience,
@@ -86,9 +104,10 @@ export const generateRefreshToken = (
 export const generateTokens = (
   userId: string,
   workspaceId: string | Types.ObjectId,
+  role: "admin" | "user",
 ) => {
-  const accessToken = generateAccessToken(userId, workspaceId);
-  const refreshToken = generateRefreshToken(userId, workspaceId);
+  const accessToken = generateAccessToken(userId, workspaceId, role);
+  const refreshToken = generateRefreshToken(userId, workspaceId, role);
 
   return { accessToken, refreshToken };
 };

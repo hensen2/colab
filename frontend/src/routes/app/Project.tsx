@@ -1,10 +1,10 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { columns } from "@/features/projects/components/ProjectColumns";
 import { DataTable } from "@/components/blocks";
-import CreateProject from "@/features/projects/components/CreateProject";
 import { useProject } from "@/features/projects/api/useProject";
 import { useLocation } from "react-router-dom";
 import { IProject } from "@/types/api.types";
+import CreateExperiment from "@/features/experiments/components/CreateExperiment";
 
 export const ProjectPage = () => {
   const { state: project }: { state: IProject } = useLocation();
@@ -25,7 +25,7 @@ export const ProjectPage = () => {
           >
             Edit
           </button>
-          <CreateProject />
+          <CreateExperiment />
         </div>
       </div>
       <div className="w-full pb-10">

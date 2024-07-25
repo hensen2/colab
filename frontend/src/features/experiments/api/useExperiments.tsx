@@ -1,3 +1,4 @@
+import { getToken } from "@/features/auth/api/useAuth";
 import { api } from "@/lib/api";
 import { IExperimentsResponse } from "@/types/api.types";
 import { QueryClient, useQuery } from "@tanstack/react-query";
@@ -12,11 +13,11 @@ const queryOptions = {
   queryFn: getExperiments,
 };
 
-export const experimentsLoader = (queryClient: QueryClient) => () => {
-  return (
-    queryClient.getQueryData(queryOptions.queryKey) ??
-    queryClient.fetchQuery(queryOptions)
-  );
+export const experimentsLoader = (queryClient: QueryClient) => async () => {
+  return await queryClient.ensureQueryData({
+    queryKey: ["auth"],
+    queryFn: getToken,
+  });
 };
 
 export function useExperiments() {
