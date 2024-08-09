@@ -1,20 +1,9 @@
 import app from "./app";
-import { clientURL, port } from "./lib/config";
+import { port } from "./lib/config";
 import logger from "./lib/logger";
-import { Server } from "socket.io";
 
 const server = app.listen(port, () => {
   logger.info(`Server running at port: ${port}`);
-});
-
-const io = new Server(server, {
-  cors: {
-    origin: clientURL,
-  },
-});
-
-io.on("connection", (socket) => {
-  logger.info(`WebSocket ID: ${socket.id}`);
 });
 
 const exitHandler = () => {

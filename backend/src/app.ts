@@ -1,14 +1,19 @@
+// Must setup app before router to init websocket
 import express from "express";
+import expressWs from "express-ws";
+const ws = expressWs(express());
+const app = ws.app;
+
+// Import the rest of the app libs
+import { clientURL, cookieSecret } from "./lib/config";
 import cookieParser from "cookie-parser";
 import cors from "cors";
-import router from "./lib/router";
 import morgan from "./middleware/morgan";
-import { clientURL, cookieSecret } from "./lib/config";
+import router from "./lib/router";
 import errorHandler from "./middleware/errorHandler";
 import "./db/mongo"; // initializes mongodb connection
 
-const app = express();
-
+// Application configuration
 app.use(cors({ origin: clientURL, credentials: true }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));

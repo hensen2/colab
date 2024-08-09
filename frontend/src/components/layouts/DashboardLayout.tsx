@@ -9,12 +9,12 @@ import {
 import { Menu } from "lucide-react";
 import { Navbar, PageHeader } from "@/components/blocks";
 import { Outlet } from "react-router-dom";
-import useWebSocket from "@/hooks/useWebSocket";
+// import useWebSocket from "@/hooks/useWebSocket";
 
 export default function DashboardLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const { isConnected } = useWebSocket();
-  console.log(isConnected);
+  // const { isConnected } = useWebSocket();
+  // console.log(isConnected);
 
   return (
     <>

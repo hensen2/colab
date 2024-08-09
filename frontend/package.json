@@ -16,6 +16,7 @@
     "server": "json-server -p3001 --watch db.json"
   },
   "dependencies": {
+    "@hocuspocus/provider": "^2.13.5",
     "@hookform/resolvers": "^3.6.0",
     "@radix-ui/react-accordion": "^1.2.0",
     "@radix-ui/react-checkbox": "^1.1.1",
@@ -43,7 +44,6 @@
     "react-dom": "^18.2.0",
     "react-hook-form": "^7.52.0",
     "react-router-dom": "^6.23.1",
-    "socket.io-client": "^4.7.5",
     "tailwind-merge": "^2.3.0",
     "tailwindcss-animate": "^1.0.7",
     "yjs": "^13.6.18",

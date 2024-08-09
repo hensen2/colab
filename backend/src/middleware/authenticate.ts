@@ -7,7 +7,7 @@ import catchAsync from "../utils/catchAsync";
 const authenticate = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
     const payload = verifyTokens(
-      req.headers.authorization!,
+      req.cookies.accessToken!,
       req.cookies.refreshToken,
     );
 

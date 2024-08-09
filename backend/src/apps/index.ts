@@ -2,7 +2,7 @@ import express from "express";
 import validate from "../middleware/validate";
 import authenticate from "../middleware/authenticate";
 import userRouter from "./users";
-import { accessSchema, refreshSchema } from "../auth/auth.validation";
+import { refreshSchema } from "../auth/auth.validation";
 import { RequestSource } from "../types/request.types";
 import projectRouter from "./projects/project.router";
 import experimentRouter from "./experiments";
@@ -12,7 +12,7 @@ const apiRouter = express.Router();
 // validate and verify jwt tokens for api access
 apiRouter.use(
   validate(refreshSchema, RequestSource.COOKIE),
-  validate(accessSchema, RequestSource.HEADER),
+  // validate(accessSchema, RequestSource.HEADER),
   authenticate,
 );
 

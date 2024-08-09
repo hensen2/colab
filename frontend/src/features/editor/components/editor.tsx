@@ -11,8 +11,16 @@ import TaskList from "@tiptap/extension-task-list";
 import TaskItem from "@tiptap/extension-task-item";
 import Collaboration from "@tiptap/extension-collaboration";
 import * as Y from "yjs";
+import { HocuspocusProvider } from "@hocuspocus/provider";
 
-const doc = new Y.Doc();
+const provider = new HocuspocusProvider({
+  url: `ws://localhost:8080/api/experiments/${"hello"}`,
+  name: "example-document",
+  document: new Y.Doc(),
+  onConnect: () => {
+    console.log("connected");
+  },
+});
 
 const Editor = () => {
   const editor = useEditor({
@@ -33,12 +41,13 @@ const Editor = () => {
             class: "leading-[1.1]",
           },
         },
+        history: false,
       }),
       Highlight,
       TaskList,
       TaskItem,
       Collaboration.configure({
-        document: doc,
+        document: provider.document,
       }),
     ],
     editorProps: {

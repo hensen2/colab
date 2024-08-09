@@ -4,7 +4,7 @@ dotenv.config();
 
 export const environment = process.env.NODE_ENV as string;
 
-export const port = process.env.PORT as string;
+export const port = Number(process.env.PORT);
 
 export const clientURL = process.env.CLIENT_URL as string;
 

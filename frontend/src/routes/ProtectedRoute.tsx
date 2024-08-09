@@ -11,7 +11,7 @@ export const ProtectedRoute = () => {
   const isAuthenticated = !!auth.data?.isAuthenticated;
   const user = useUser(isAuthenticated);
 
-  if (user.isPending || navigation.state === "loading") {
+  if ((isAuthenticated && user.isPending) || navigation.state === "loading") {
     return <Spinner />;
   }
 
