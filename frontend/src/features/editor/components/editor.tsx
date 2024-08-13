@@ -1,28 +1,31 @@
 import MenuBar from "./MenuBar";
-import {
-  EditorContent,
-  FloatingMenu,
-  BubbleMenu,
-  useEditor,
-} from "@tiptap/react";
+import { EditorContent, useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import Highlight from "@tiptap/extension-highlight";
 import TaskList from "@tiptap/extension-task-list";
 import TaskItem from "@tiptap/extension-task-item";
 import Collaboration from "@tiptap/extension-collaboration";
-import * as Y from "yjs";
+import CollaborationCursor from "@tiptap/extension-collaboration-cursor";
 import { HocuspocusProvider } from "@hocuspocus/provider";
+// import { useMemo } from "react";
+// import * as Y from "yjs";
 
-const provider = new HocuspocusProvider({
-  url: `ws://localhost:8080/api/experiments/${"hello"}`,
-  name: "example-document",
-  document: new Y.Doc(),
-  onConnect: () => {
-    console.log("connected");
-  },
-});
+interface IEditorProps {
+  provider: HocuspocusProvider;
+  // experimentId: string;
+}
 
-const Editor = () => {
+const Editor = ({ provider }: IEditorProps) => {
+  console.log(provider);
+  // Cleanup provider instance
+  // useEffect(() => {
+  //   return () => {
+  //     if (provider) {
+  //       provider.destroy();
+  //     }
+  //   };
+  // }, [provider]);
+
   const editor = useEditor({
     extensions: [
       StarterKit.configure({
@@ -49,7 +52,12 @@ const Editor = () => {
       Collaboration.configure({
         document: provider.document,
       }),
+      CollaborationCursor.configure({
+        provider,
+        user: { name: "Matthew Hensen", color: "#ffcc00" },
+      }),
     ],
+    shouldRerenderOnTransaction: false,
     editorProps: {
       attributes: {
         class:
@@ -62,8 +70,6 @@ const Editor = () => {
     <div className="h-full overflow-hidden rounded-lg border-[2.5px] border-indigo-600 bg-white text-gray-700 shadow-md">
       {editor && <MenuBar editor={editor} />}
       <EditorContent editor={editor} />
-      <FloatingMenu editor={editor}>This is the floating menu</FloatingMenu>
-      <BubbleMenu editor={editor}>This is the bubble menu</BubbleMenu>
     </div>
   );
 };
