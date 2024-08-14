@@ -3,6 +3,12 @@ import { createNewExperiment, getWorkspaceExperiments } from "./";
 import catchAsync from "../../utils/catchAsync";
 import { StatusCode, StatusType } from "../../types/response.types";
 import { NotFoundError } from "../../lib/appError";
+import { Doc, encodeStateAsUpdate } from "yjs";
+
+function createInitialExperimentDoc() {
+  const ydoc = new Doc();
+  return Buffer.from(encodeStateAsUpdate(ydoc));
+}
 
 export const getExperiments = catchAsync(
   async (_req: Request, res: Response) => {
@@ -23,10 +29,14 @@ export const getExperiments = catchAsync(
 export const createExperiment = catchAsync(
   async (req: Request, res: Response) => {
     const { user, workspaceId } = res.locals;
+
+    const state = createInitialExperimentDoc();
+
     const experiment = await createNewExperiment({
       ...req.body,
       workspaceId,
       createdBy: user.email,
+      state,
     });
 
     if (!experiment) {

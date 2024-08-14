@@ -14,3 +14,11 @@ export const getExperimentWithIds = async (
 ) => {
   return await Experiment.findOne({ _id, workspaceId });
 };
+
+export const updateExperimentState = async (
+  _id: string,
+  workspaceId: string,
+  state: Buffer,
+) => {
+  return await Experiment.updateOne({ _id, workspaceId }, { state });
+};

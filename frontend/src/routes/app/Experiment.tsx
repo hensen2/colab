@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
+import { useAuth } from "@/features/auth/api/useAuth";
 import Editor from "@/features/editor/components/Editor";
 import { IExperiment } from "@/types/api.types";
 import { HocuspocusProvider } from "@hocuspocus/provider";
@@ -7,13 +8,13 @@ import { useLocation } from "react-router-dom";
 
 export const ExperimentPage = () => {
   const { state: experiment }: { state: IExperiment } = useLocation();
+  const { data } = useAuth();
 
   const provider = useMemo(() => {
     return new HocuspocusProvider({
       url: `ws://localhost:8081`,
       name: experiment.id,
-
-      // document: new Y.Doc(),
+      token: data?.accessToken,
       // onOpen: () => {
       //   console.log("WebSocket connection opened.");
       // },
@@ -33,7 +34,7 @@ export const ExperimentPage = () => {
       //   console.log(data);
       // },
     });
-  }, [experiment.id]);
+  }, [experiment.id, data?.accessToken]);
 
   return (
     <div className="h-full">

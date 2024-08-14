@@ -32,6 +32,9 @@ const experimentSchema = new Schema<IExperiment>(
     projectId: {
       type: Schema.Types.ObjectId,
     },
+    state: {
+      type: Schema.Types.Buffer,
+    },
   },
   {
     versionKey: false,
