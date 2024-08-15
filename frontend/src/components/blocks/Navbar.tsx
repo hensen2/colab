@@ -6,6 +6,7 @@ import {
   FlaskConical,
   Home,
   LogOut,
+  Settings,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Link, useLocation } from "react-router-dom";
@@ -110,9 +111,20 @@ export default function Navbar() {
                     <span aria-hidden="true">Matt Hensen</span>
                   </div>
                 </AccordionTrigger>
-                <AccordionContent className="flex items-center px-6">
+                <AccordionContent className="flex-col items-center space-y-3 px-6">
                   <button
-                    className="group flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 text-gray-700 hover:bg-gray-50 hover:text-indigo-600"
+                    className="group flex w-full gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 text-gray-700 hover:bg-gray-50 hover:text-indigo-600"
+                    onClick={() => logout.mutate()}
+                  >
+                    <Settings
+                      className="h-6 w-6 shrink-0 text-gray-400 group-hover:text-indigo-600"
+                      aria-hidden="true"
+                      strokeWidth={1.4}
+                    />
+                    Manage Workspace
+                  </button>
+                  <button
+                    className="group flex w-full gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 text-gray-700 hover:bg-gray-50 hover:text-indigo-600"
                     onClick={() => logout.mutate()}
                   >
                     <LogOut

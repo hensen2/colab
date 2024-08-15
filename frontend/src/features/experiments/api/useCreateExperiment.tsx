@@ -1,7 +1,6 @@
 import { api } from "@/lib/api";
 import { ICreateExperimentData, IExperimentsResponse } from "@/types/api.types";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useCallback } from "react";
 
 export const createExperiment = (
   data: ICreateExperimentData,
@@ -12,16 +11,10 @@ export const createExperiment = (
 export function useCreateExperiment() {
   const queryClient = useQueryClient();
 
-  const setExperiments = useCallback(
-    (data: IExperimentsResponse) =>
-      queryClient.setQueryData(["experiments"], data),
-    [queryClient],
-  );
-
   return useMutation({
     mutationFn: createExperiment,
-    onSuccess: (data) => {
-      setExperiments(data);
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ["experiments"] });
     },
   });
 }

@@ -61,7 +61,7 @@ const Editor = ({ provider }: IEditorProps) => {
     editorProps: {
       attributes: {
         class:
-          "prose prose-sm sm:prose-base lg:prose-lg xl:prose-2xl p-5 min-w-full focus:outline-none",
+          "prose prose-sm sm:prose-base lg:prose-lg p-5 min-w-full focus:outline-none",
       },
     },
   });

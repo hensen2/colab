@@ -1,7 +1,6 @@
 import { api } from "@/lib/api";
 import { ICreateProjectData, IProjectsResponse } from "@/types/api.types";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useCallback } from "react";
 
 export const createProject = (
   data: ICreateProjectData,
@@ -12,15 +11,10 @@ export const createProject = (
 export function useCreateProject() {
   const queryClient = useQueryClient();
 
-  const setProjects = useCallback(
-    (data: IProjectsResponse) => queryClient.setQueryData(["projects"], data),
-    [queryClient],
-  );
-
   return useMutation({
     mutationFn: createProject,
-    onSuccess: (data) => {
-      setProjects(data);
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ["projects"] });
     },
   });
 }

@@ -1,19 +1,21 @@
 import { cn } from "@/lib/utils";
 import { LucideProps } from "lucide-react";
 
-export default function MenuItem({
-  icon: Icon,
-  title,
-  action,
-  isActive = null,
-}: {
+export interface IMenuItemProps {
   icon: React.ForwardRefExoticComponent<
     Omit<LucideProps, "ref"> & React.RefAttributes<SVGSVGElement>
   >;
   title: string;
   action: () => void;
   isActive: (() => boolean) | null;
-}) {
+}
+
+export default function MenuItem({
+  icon: Icon,
+  title,
+  action,
+  isActive = null,
+}: IMenuItemProps) {
   return (
     <button
       className={cn(

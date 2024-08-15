@@ -1,3 +1,27 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer components {
+  .ProseMirror {
+    p {
+      @apply my-6 leading-relaxed first:mt-0 last:mb-0;
+    }
+
+    h1 {
+      @apply text-3xl;
+    }
+
+    h2 {
+      @apply text-2xl;
+    }
+
+    .collaboration-cursor__caret {
+      @apply pointer-events-none relative -ml-[1px] -mr-[1px] break-normal border-l border-r border-black;
+    }
+
+    .collaboration-cursor__label {
+      @apply absolute -left-[1px] -top-[1.4em] select-none whitespace-nowrap rounded rounded-tl-none px-1.5 py-0.5 text-xs font-semibold leading-none text-black;
+    }
+  }
+}

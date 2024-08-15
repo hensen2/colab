@@ -1,6 +1,6 @@
 import type { Editor } from "@tiptap/react";
 import { Fragment } from "react";
-import MenuItem from "./MenuItem";
+import MenuItem, { IMenuItemProps } from "./MenuItem";
 import {
   Bold,
   Code,
@@ -149,7 +149,7 @@ export default function MenuBar({ editor }: { editor: Editor }) {
           {item.type === "divider" ? (
             <Separator orientation="vertical" className="mx-1 h-7" />
           ) : (
-            <MenuItem {...item} />
+            <MenuItem {...(item as IMenuItemProps)} />
           )}
         </Fragment>
       ))}

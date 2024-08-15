@@ -33,7 +33,7 @@ const experimentSchema = new Schema<IExperiment>(
       type: Schema.Types.ObjectId,
     },
     state: {
-      type: Schema.Types.Buffer,
+      type: Buffer,
     },
   },
   {
