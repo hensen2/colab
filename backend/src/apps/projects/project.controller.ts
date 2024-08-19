@@ -38,7 +38,6 @@ export const createProject = catchAsync(async (req: Request, res: Response) => {
 });
 
 export const getProject = catchAsync(async (req: Request, res: Response) => {
-  console.log(req.params.projectId);
   const project = await getProjectWithIds(
     req.params.projectId,
     res.locals.workspaceId,

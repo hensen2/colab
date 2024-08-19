@@ -1,7 +1,7 @@
 import { model, Schema } from "mongoose";
-import { IExperiment } from "./";
+import { IProtocol } from "./";
 
-const experimentSchema = new Schema<IExperiment>(
+const protocolSchema = new Schema<IProtocol>(
   {
     name: {
       type: String,
@@ -12,6 +12,7 @@ const experimentSchema = new Schema<IExperiment>(
     },
     description: {
       type: String,
+      // minlength: 0 || 3,
       maxlength: 255,
       trim: true,
       default: "",
@@ -31,11 +32,7 @@ const experimentSchema = new Schema<IExperiment>(
     projectId: {
       type: Schema.Types.ObjectId,
     },
-    protocolState: {
-      type: Buffer,
-      required: true,
-    },
-    notesState: {
+    state: {
       type: Buffer,
       required: true,
     },
@@ -46,18 +43,18 @@ const experimentSchema = new Schema<IExperiment>(
   },
 );
 
-experimentSchema.index({ workspaceId: 1 });
-experimentSchema.index({ _id: 1, workspaceId: 1 });
+protocolSchema.index({ workspaceId: 1 });
+protocolSchema.index({ _id: 1, workspaceId: 1 });
 
-experimentSchema.set("toJSON", {
+protocolSchema.set("toJSON", {
   flattenObjectIds: true,
-  transform: (_doc, experiment) => {
-    experiment.id = experiment._id;
-    delete experiment._id;
-    delete experiment.workspaceId;
-    delete experiment.createdAt;
-    return experiment;
+  transform: (_doc, protocol) => {
+    protocol.id = protocol._id;
+    delete protocol._id;
+    delete protocol.workspaceId;
+    delete protocol.createdAt;
+    return protocol;
   },
 });
 
-export const Experiment = model<IExperiment>("Experiment", experimentSchema);
+export const Protocol = model<IProtocol>("Protocol", protocolSchema);

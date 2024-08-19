@@ -31,6 +31,23 @@ export interface IRegisterUserData {
   password: string;
 }
 
+export interface IProtocol {
+  id: string;
+  name: string;
+  description: string;
+  createdBy: string;
+  updatedAt: Date;
+}
+
+export interface IProtocolsResponse {
+  protocols: IProtocol[];
+}
+
+export interface ICreateProtocolData {
+  name: string;
+  description?: string;
+}
+
 export interface IExperiment {
   id: string;
   name: string;
@@ -43,9 +60,14 @@ export interface IExperimentsResponse {
   experiments: IExperiment[];
 }
 
+export interface IExperimentResponse {
+  experiment: IExperiment;
+}
+
 export interface ICreateExperimentData {
   name: string;
   description?: string;
+  protocolId: string;
 }
 
 export interface IProject {

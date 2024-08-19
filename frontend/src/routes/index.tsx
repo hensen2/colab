@@ -1,9 +1,10 @@
 import { createBrowserRouter } from "react-router-dom";
 import { authLoader } from "@/features/auth/api/useAuth";
 import { QueryClient } from "@tanstack/react-query";
-import { projectsLoader } from "@/features/projects/api/useProjects";
 import { default as ErrorPage } from "./ErrorPage";
+import { projectsLoader } from "@/features/projects/api/useProjects";
 import { experimentsLoader } from "@/features/experiments/api/useExperiments";
+import { protocolsLoader } from "@/features/protocols/api/useProtocols";
 
 const createRouter = (queryClient: QueryClient) =>
   createBrowserRouter([
@@ -89,6 +90,16 @@ const createRouter = (queryClient: QueryClient) =>
             const { ProtocolsPage } = await import("./app/Protocols");
             return {
               Component: ProtocolsPage,
+            };
+          },
+          loader: protocolsLoader(queryClient),
+        },
+        {
+          path: "protocols/:protocolId",
+          lazy: async () => {
+            const { ProtocolPage } = await import("./app/Protocol");
+            return {
+              Component: ProtocolPage,
             };
           },
         },

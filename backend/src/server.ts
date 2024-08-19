@@ -6,10 +6,7 @@ import { verifyAccessToken } from "./lib/tokens";
 import { getUserWithTokenData } from "./apps/users";
 import { AuthFailureError, NotFoundError } from "./lib/appError";
 import { encodeStateAsUpdate, applyUpdate } from "yjs";
-import {
-  getExperimentWithIds,
-  updateExperimentState,
-} from "./apps/experiments";
+import { getProtocolWithIds, updateProtocolState } from "./apps/protocols";
 
 const server = app.listen(port, () => {
   logger.info(`Server running at port: ${port}`);
@@ -42,13 +39,13 @@ const wss = Server.configure({
   },
   async onLoadDocument({ document, documentName, context }) {
     const { workspaceId } = context;
-    const experiment = await getExperimentWithIds(documentName, workspaceId);
+    const protocol = await getProtocolWithIds(documentName, workspaceId);
 
-    if (!experiment || !experiment.state) {
-      throw new NotFoundError("Experiment not found");
+    if (!protocol || !protocol.state) {
+      throw new NotFoundError("Protocol not found");
     }
 
-    const uint8 = new Uint8Array(experiment.state);
+    const uint8 = new Uint8Array(protocol.state);
     applyUpdate(document, uint8);
 
     return document;
@@ -58,7 +55,7 @@ const wss = Server.configure({
 
     const state = Buffer.from(encodeStateAsUpdate(document));
 
-    await updateExperimentState(documentName, workspaceId, state);
+    await updateProtocolState(documentName, workspaceId, state);
   },
 });
 

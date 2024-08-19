@@ -1,16 +1,15 @@
 import { Document, Types } from "mongoose";
 
-export interface IExperiment {
+export interface IProtocol {
   name: string;
   description?: string;
   createdBy: string;
   workspaceId: Types.ObjectId;
   projectId?: Types.ObjectId;
-  protocolState: Buffer;
-  notesState: Buffer;
+  state: Buffer;
 }
 
-export type ExperimentDoc = Document<unknown, {}, IExperiment> &
-  IExperiment & {
+export type ProtocolDoc = Document<unknown, {}, IProtocol> &
+  IProtocol & {
     _id: Types.ObjectId;
   };

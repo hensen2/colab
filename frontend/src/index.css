@@ -16,6 +16,10 @@
       @apply text-2xl;
     }
 
+    hr {
+      @apply my-10 border-0 border-t border-black/20 bg-black/80;
+    }
+
     .collaboration-cursor__caret {
       @apply pointer-events-none relative -ml-[1px] -mr-[1px] break-normal border-l border-r border-black;
     }
