@@ -13,7 +13,7 @@ export const ProtocolPage = () => {
   const provider = useMemo(() => {
     return new HocuspocusProvider({
       url: `ws://localhost:8081`,
-      name: protocol.id,
+      name: `protocol.${protocol.id}`,
       token: data?.accessToken,
       // onOpen: () => {
       //   console.log("WebSocket connection opened.");

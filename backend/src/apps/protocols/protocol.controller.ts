@@ -3,12 +3,8 @@ import { createNewProtocol, getWorkspaceProtocols } from "./";
 import catchAsync from "../../utils/catchAsync";
 import { StatusCode, StatusType } from "../../types/response.types";
 import { NotFoundError } from "../../lib/appError";
-import { Doc, encodeStateAsUpdate } from "yjs";
-
-function createInitialProtocolDoc() {
-  const ydoc = new Doc();
-  return Buffer.from(encodeStateAsUpdate(ydoc));
-}
+import { createInitialYDoc, createNewDocument } from "../documents";
+import { Types } from "mongoose";
 
 export const getProtocols = catchAsync(async (_req: Request, res: Response) => {
   const protocols = await getWorkspaceProtocols(res.locals.workspaceId);
@@ -28,17 +24,30 @@ export const createProtocol = catchAsync(
   async (req: Request, res: Response) => {
     const { user, workspaceId } = res.locals;
 
-    const state = createInitialProtocolDoc();
-
     const protocol = await createNewProtocol({
       ...req.body,
+      isProjectMember: req.body.projectId ? true : false,
       workspaceId,
       createdBy: user.email,
-      state,
+      document: new Types.ObjectId(),
     });
 
     if (!protocol) {
       throw new NotFoundError("Protocol not created");
+    }
+
+    const newDocData = {
+      _id: protocol.document,
+      name: `protocol.${protocol.id}`,
+      createdBy: user.email,
+      workspaceId,
+      state: createInitialYDoc(),
+    };
+
+    const document = await createNewDocument(newDocData);
+
+    if (!document) {
+      throw new NotFoundError("Document not created");
     }
 
     return res.status(StatusCode.SUCCESS).json({

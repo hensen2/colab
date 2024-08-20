@@ -11,10 +11,26 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/Form";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/Command";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/Popover";
 import { Input } from "@/components/ui/Input";
 import { useCreateProtocol } from "../api/useCreateProtocol";
-import { Dispatch, SetStateAction } from "react";
+import { Dispatch, SetStateAction, useState } from "react";
 import { Textarea } from "@/components/ui/Textarea";
+import { Check, ChevronsUpDown } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { useProjects } from "@/features/projects/api/useProjects";
 
 const formSchema = z.object({
   name: z
@@ -27,6 +43,7 @@ const formSchema = z.object({
     .max(255, "Maximum of 255 characters allowed.")
     .optional()
     .or(z.literal("")),
+  projectId: z.string().length(24).optional(),
 });
 
 interface ProtocolFormProps {
@@ -34,7 +51,9 @@ interface ProtocolFormProps {
 }
 
 export default function ProtocolForm({ setOpen }: ProtocolFormProps) {
+  const [openProject, setOpenProject] = useState(false);
   const { mutate: createProtocol } = useCreateProtocol();
+  const { data: projectsData } = useProjects();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -86,12 +105,76 @@ export default function ProtocolForm({ setOpen }: ProtocolFormProps) {
             </FormItem>
           )}
         />
-        <Button
-          type="submit"
-          className="inline-flex bg-indigo-600 text-white hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-        >
-          Create protocol
-        </Button>
+        <FormField
+          control={form.control}
+          name="projectId"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel className="block">Project</FormLabel>
+              <Popover open={openProject} onOpenChange={setOpenProject}>
+                <PopoverTrigger asChild>
+                  <FormControl>
+                    <Button
+                      variant="outline"
+                      role="combobox"
+                      aria-expanded={openProject}
+                      className={cn(
+                        "w-[200px] justify-between px-3",
+                        !field.value && "text-muted-foreground",
+                      )}
+                    >
+                      {field.value
+                        ? projectsData?.projects.find(
+                            (project) => project.id === field.value,
+                          )?.name
+                        : "Add project"}
+                      <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                    </Button>
+                  </FormControl>
+                </PopoverTrigger>
+                <PopoverContent className="w-[200px] p-0">
+                  <Command>
+                    <CommandInput placeholder="Search project..." />
+                    <CommandList>
+                      <CommandEmpty>No project found.</CommandEmpty>
+                      <CommandGroup>
+                        {projectsData?.projects.map((project) => (
+                          <CommandItem
+                            key={project.id}
+                            value={project.id}
+                            onSelect={() => {
+                              form.setValue("projectId", project.id);
+                            }}
+                          >
+                            <Check
+                              className={cn(
+                                "mr-2 h-4 w-4",
+                                project.id === field.value
+                                  ? "opacity-100"
+                                  : "opacity-0",
+                              )}
+                            />
+                            {project.name}
+                          </CommandItem>
+                        ))}
+                      </CommandGroup>
+                    </CommandList>
+                  </Command>
+                </PopoverContent>
+              </Popover>
+
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <div className="flex justify-end">
+          <Button
+            type="submit"
+            className="inline-flex bg-indigo-600 text-white hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+          >
+            Create protocol
+          </Button>
+        </div>
       </form>
     </Form>
   );

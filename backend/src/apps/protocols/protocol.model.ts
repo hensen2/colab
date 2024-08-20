@@ -12,7 +12,6 @@ const protocolSchema = new Schema<IProtocol>(
     },
     description: {
       type: String,
-      // minlength: 0 || 3,
       maxlength: 255,
       trim: true,
       default: "",
@@ -29,11 +28,16 @@ const protocolSchema = new Schema<IProtocol>(
       type: Schema.Types.ObjectId,
       required: true,
     },
+    isProjectMember: {
+      type: Boolean,
+      required: true,
+    },
     projectId: {
       type: Schema.Types.ObjectId,
     },
-    state: {
-      type: Buffer,
+    document: {
+      type: Schema.Types.ObjectId,
+      ref: "Document",
       required: true,
     },
   },

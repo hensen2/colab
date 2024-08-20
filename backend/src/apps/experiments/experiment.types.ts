@@ -6,8 +6,8 @@ export interface IExperiment {
   createdBy: string;
   workspaceId: Types.ObjectId;
   projectId?: Types.ObjectId;
-  protocolState: Buffer;
-  notesState: Buffer;
+  protocolDocument: Types.ObjectId;
+  notesDocument: Types.ObjectId;
 }
 
 export type ExperimentDoc = Document<unknown, {}, IExperiment> &

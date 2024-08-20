@@ -31,6 +31,7 @@ import { Textarea } from "@/components/ui/Textarea";
 import { Check, ChevronsUpDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useProtocols } from "@/features/protocols/api/useProtocols";
+import { useProjects } from "@/features/projects/api/useProjects";
 
 const formSchema = z.object({
   name: z
@@ -44,6 +45,7 @@ const formSchema = z.object({
     .optional()
     .or(z.literal("")),
   protocolId: z.string().length(24, "Please select a protocol."),
+  projectId: z.string().length(24).optional(),
 });
 
 interface ExperimentFormProps {
@@ -51,8 +53,11 @@ interface ExperimentFormProps {
 }
 
 export default function ExperimentForm({ setOpen }: ExperimentFormProps) {
-  const [openSelect, setOpenSelect] = useState(false);
-  const { data } = useProtocols();
+  const [openProtocol, setOpenProtocol] = useState(false);
+  const [openProject, setOpenProject] = useState(false);
+  const { data: protocolsData } = useProtocols();
+  const { data: projectsData } = useProjects();
+
   const { mutate: createExperiment } = useCreateExperiment();
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -105,68 +110,132 @@ export default function ExperimentForm({ setOpen }: ExperimentFormProps) {
             </FormItem>
           )}
         />
-        <FormField
-          control={form.control}
-          name="protocolId"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel className="block">Protocol</FormLabel>
-              <Popover open={openSelect} onOpenChange={setOpenSelect}>
-                <PopoverTrigger asChild>
-                  <FormControl>
-                    <Button
-                      variant="outline"
-                      role="combobox"
-                      aria-expanded={openSelect}
-                      className={cn(
-                        "w-[200px] justify-between px-3",
-                        !field.value && "text-muted-foreground",
-                      )}
-                    >
-                      {field.value
-                        ? data?.protocols.find(
-                            (protocol) => protocol.id === field.value,
-                          )?.name
-                        : "Add protocol"}
-                      <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                    </Button>
-                  </FormControl>
-                </PopoverTrigger>
-                <PopoverContent className="w-[200px] p-0">
-                  <Command>
-                    <CommandInput placeholder="Search protocols..." />
-                    <CommandList>
-                      <CommandEmpty>No protocol found.</CommandEmpty>
-                      <CommandGroup>
-                        {data?.protocols.map((protocol) => (
-                          <CommandItem
-                            key={protocol.id}
-                            value={protocol.id}
-                            onSelect={() => {
-                              form.setValue("protocolId", protocol.id);
-                            }}
-                          >
-                            <Check
-                              className={cn(
-                                "mr-2 h-4 w-4",
-                                protocol.id === field.value
-                                  ? "opacity-100"
-                                  : "opacity-0",
-                              )}
-                            />
-                            {protocol.name}
-                          </CommandItem>
-                        ))}
-                      </CommandGroup>
-                    </CommandList>
-                  </Command>
-                </PopoverContent>
-              </Popover>
+        <div className="flex items-center justify-between">
+          <FormField
+            control={form.control}
+            name="protocolId"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="block">Protocol</FormLabel>
+                <Popover open={openProtocol} onOpenChange={setOpenProtocol}>
+                  <PopoverTrigger asChild>
+                    <FormControl>
+                      <Button
+                        variant="outline"
+                        role="combobox"
+                        aria-expanded={openProtocol}
+                        className={cn(
+                          "w-[200px] justify-between px-3",
+                          !field.value && "text-muted-foreground",
+                        )}
+                      >
+                        {field.value
+                          ? protocolsData?.protocols.find(
+                              (protocol) => protocol.id === field.value,
+                            )?.name
+                          : "Add protocol"}
+                        <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                      </Button>
+                    </FormControl>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-[200px] p-0">
+                    <Command>
+                      <CommandInput placeholder="Search protocols..." />
+                      <CommandList>
+                        <CommandEmpty>No protocol found.</CommandEmpty>
+                        <CommandGroup>
+                          {protocolsData?.protocols.map((protocol) => (
+                            <CommandItem
+                              key={protocol.id}
+                              value={protocol.id}
+                              onSelect={() => {
+                                form.setValue("protocolId", protocol.id);
+                              }}
+                            >
+                              <Check
+                                className={cn(
+                                  "mr-2 h-4 w-4",
+                                  protocol.id === field.value
+                                    ? "opacity-100"
+                                    : "opacity-0",
+                                )}
+                              />
+                              {protocol.name}
+                            </CommandItem>
+                          ))}
+                        </CommandGroup>
+                      </CommandList>
+                    </Command>
+                  </PopoverContent>
+                </Popover>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="projectId"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="block">Project</FormLabel>
+                <Popover open={openProject} onOpenChange={setOpenProject}>
+                  <PopoverTrigger asChild>
+                    <FormControl>
+                      <Button
+                        variant="outline"
+                        role="combobox"
+                        aria-expanded={openProject}
+                        className={cn(
+                          "w-[200px] justify-between px-3",
+                          !field.value && "text-muted-foreground",
+                        )}
+                      >
+                        {field.value
+                          ? projectsData?.projects.find(
+                              (project) => project.id === field.value,
+                            )?.name
+                          : "Add project"}
+                        <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                      </Button>
+                    </FormControl>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-[200px] p-0">
+                    <Command>
+                      <CommandInput placeholder="Search project..." />
+                      <CommandList>
+                        <CommandEmpty>No project found.</CommandEmpty>
+                        <CommandGroup>
+                          {projectsData?.projects.map((project) => (
+                            <CommandItem
+                              key={project.id}
+                              value={project.id}
+                              onSelect={() => {
+                                form.setValue("projectId", project.id);
+                              }}
+                            >
+                              <Check
+                                className={cn(
+                                  "mr-2 h-4 w-4",
+                                  project.id === field.value
+                                    ? "opacity-100"
+                                    : "opacity-0",
+                                )}
+                              />
+                              {project.name}
+                            </CommandItem>
+                          ))}
+                        </CommandGroup>
+                      </CommandList>
+                    </Command>
+                  </PopoverContent>
+                </Popover>
 
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
+
         <div className="flex justify-end">
           <Button
             type="submit"

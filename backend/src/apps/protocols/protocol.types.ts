@@ -5,8 +5,9 @@ export interface IProtocol {
   description?: string;
   createdBy: string;
   workspaceId: Types.ObjectId;
+  isProjectMember: boolean;
   projectId?: Types.ObjectId;
-  state: Buffer;
+  document: Types.ObjectId;
 }
 
 export type ProtocolDoc = Document<unknown, {}, IProtocol> &

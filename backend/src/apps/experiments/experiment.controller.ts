@@ -7,13 +7,9 @@ import {
 import catchAsync from "../../utils/catchAsync";
 import { StatusCode, StatusType } from "../../types/response.types";
 import { NotFoundError } from "../../lib/appError";
-import { Doc, encodeStateAsUpdate } from "yjs";
 import { getProtocolWithIds } from "../protocols";
-
-function createInitialExperimentDoc() {
-  const ydoc = new Doc();
-  return Buffer.from(encodeStateAsUpdate(ydoc));
-}
+import { Types } from "mongoose";
+import { createInitialYDoc, createNewDocument } from "../documents";
 
 export const getExperiments = catchAsync(
   async (_req: Request, res: Response) => {
@@ -38,26 +34,46 @@ export const createExperiment = catchAsync(
 
     const protocol = await getProtocolWithIds(protocolId, workspaceId);
 
-    if (!protocol) {
+    if (!protocol || !protocol.document.state) {
       throw new NotFoundError("Protocol not found");
     }
-
-    const notesState = createInitialExperimentDoc();
 
     const experiment = await createNewExperiment({
       name,
       description,
-      workspaceId,
       createdBy: user.email,
-      protocolState: protocol.state,
-      notesState,
+      workspaceId,
+      protocolDocument: new Types.ObjectId(),
+      notesDocument: new Types.ObjectId(),
     });
 
     if (!experiment) {
       throw new NotFoundError("Experiment not created");
     }
 
-    console.log(experiment);
+    const newDocsData = [
+      {
+        _id: experiment.protocolDocument,
+        name: `experiment.protocol.${experiment.id}`,
+        createdBy: user.email,
+        workspaceId,
+        state: protocol.document.state,
+      },
+      {
+        _id: experiment.notesDocument,
+        name: `experiment.notes.${experiment.id}`,
+        createdBy: user.email,
+        workspaceId,
+        state: createInitialYDoc(),
+      },
+    ];
+
+    const document = await createNewDocument(newDocsData);
+
+    if (!document) {
+      throw new NotFoundError("Document not created");
+    }
+
     return res.status(StatusCode.SUCCESS).json({
       type: StatusType.SUCCESS,
       message: "New experiment created",

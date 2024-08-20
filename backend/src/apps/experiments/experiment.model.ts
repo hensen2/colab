@@ -31,12 +31,14 @@ const experimentSchema = new Schema<IExperiment>(
     projectId: {
       type: Schema.Types.ObjectId,
     },
-    protocolState: {
-      type: Buffer,
+    protocolDocument: {
+      type: Schema.Types.ObjectId,
+      ref: "Document",
       required: true,
     },
-    notesState: {
-      type: Buffer,
+    notesDocument: {
+      type: Schema.Types.ObjectId,
+      ref: "Document",
       required: true,
     },
   },

@@ -1,3 +1,4 @@
+import { IDocument } from "../documents";
 import { Protocol, IProtocol } from "./";
 
 export const createNewProtocol = async (data: IProtocol) => {
@@ -9,7 +10,9 @@ export const getWorkspaceProtocols = async (workspaceId: string) => {
 };
 
 export const getProtocolWithIds = async (_id: string, workspaceId: string) => {
-  return await Protocol.findOne({ _id, workspaceId });
+  return await Protocol.findOne({ _id, workspaceId }).populate<{
+    document: IDocument;
+  }>("document");
 };
 
 export const updateProtocolState = async (
