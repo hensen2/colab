@@ -24,7 +24,7 @@ const wss = Server.configure({
   async onAuthenticate({ token }) {
     const { userId, workspaceId, role } = verifyAccessToken(token);
 
-    const user = await getUserWithTokenData(userId, workspaceId, role);
+    const user = await getUserWithTokenData(userId, workspaceId);
 
     if (!user) {
       throw new AuthFailureError("User not authenticated");

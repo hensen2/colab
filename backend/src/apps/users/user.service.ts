@@ -7,15 +7,16 @@ export const getUserById = async (id: string) => {
 };
 
 export const getUserWithIds = async (_id: string, workspaceId: string) => {
-  return await User.findOne({ _id, workspaceId });
+  return await User.findOne({ _id, workspaces: workspaceId });
 };
 
 export const getUserWithTokenData = async (
   _id: string,
   workspaceId: string,
-  role: "admin" | "user",
 ) => {
-  return await User.findOne({ _id, workspaceId, role });
+  return await User.findOne({ _id, workspaces: workspaceId }).populate(
+    "workspaces",
+  );
 };
 
 export const getUserByEmail = async (email: string) => {

@@ -1,5 +1,5 @@
 import { model, Schema } from "mongoose";
-import { IUser } from "./user.types";
+import { IUser } from "./";
 
 const userSchema = new Schema<IUser>(
   {
@@ -11,15 +11,6 @@ const userSchema = new Schema<IUser>(
       trim: true,
       lowercase: true,
       required: true,
-    },
-    workspaceId: {
-      type: Schema.Types.ObjectId,
-      required: true,
-    },
-    role: {
-      type: String,
-      enum: ["admin", "user"],
-      default: "admin",
     },
     firstName: {
       type: String,
@@ -43,6 +34,9 @@ const userSchema = new Schema<IUser>(
       type: String,
       default: "",
     },
+    workspaces: [
+      { type: Schema.Types.ObjectId, ref: "Workspace", required: true },
+    ],
   },
   {
     versionKey: false,
@@ -50,8 +44,7 @@ const userSchema = new Schema<IUser>(
   },
 );
 
-userSchema.index({ _id: 1, workspaceId: 1 });
-userSchema.index({ projects: 1 });
+userSchema.index({ _id: 1, workspaces: 1 });
 
 userSchema.set("toJSON", {
   flattenObjectIds: true,
@@ -64,7 +57,6 @@ userSchema.set("toJSON", {
     delete user.firstName;
     delete user.lastName;
     delete user.passwordHash;
-    delete user.workspaceId;
     delete user.updatedAt;
     delete user.createdAt;
     return user;

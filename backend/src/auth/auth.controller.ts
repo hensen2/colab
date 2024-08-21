@@ -16,6 +16,7 @@ import { createUser, getUserByEmail, getUserWithIds } from "../apps/users";
 import { StatusCode, StatusType } from "../types/response.types";
 import { createWorkspace } from "../apps/workspaces";
 import { runTransaction } from "../db/runTransaction";
+import { createPermission, getPermissionWithIds } from "../apps/permissions";
 
 // For expiring cookies in the browser
 const oneHourMs = 3600000;
@@ -31,7 +32,14 @@ export const getToken = catchAsync(async (req: Request, res: Response) => {
     throw new NotFoundError("User not found");
   }
 
-  const accessToken = generateAccessToken(userId, workspaceId, user.role);
+  const permission = await getPermissionWithIds(userId, workspaceId);
+
+  if (!permission) {
+    res.clearCookie("refreshToken");
+    throw new NotFoundError("User permissions not found");
+  }
+
+  const accessToken = generateAccessToken(userId, workspaceId, permission.role);
 
   return res
     .status(StatusCode.SUCCESS)
@@ -59,7 +67,9 @@ export const register = catchAsync(async (req: Request, res: Response) => {
 
   const passwordHash = await bcrypt.hash(password, 10);
 
+  // Run a transaction to ensure all data is created
   await runTransaction(async (session) => {
+    // Create new workspace
     const [workspace] = await createWorkspace(
       {
         name: `${firstName}'s Workspace`,
@@ -76,14 +86,14 @@ export const register = catchAsync(async (req: Request, res: Response) => {
 
     res.locals.workspaceId = workspace.id;
 
+    // Create new user
     const [user] = await createUser(
       {
         firstName,
         lastName,
         email,
         passwordHash,
-        workspaceId: workspace.id,
-        role: "admin",
+        workspaces: [workspace.id],
       },
       { session },
     );
@@ -95,14 +105,32 @@ export const register = catchAsync(async (req: Request, res: Response) => {
     }
 
     res.locals.user = user;
+
+    // Create new user permission
+    const [permission] = await createPermission(
+      {
+        workspaceId: workspace.id,
+        userId: user.id,
+        role: "admin",
+      },
+      { session },
+    );
+
+    if (!permission) {
+      throw new BadRequestError(
+        "Bad request: Unable to create new user permissions",
+      );
+    }
+
+    res.locals.role = permission.role;
   });
 
-  const { user, workspaceId } = res.locals;
+  const { user, workspaceId, role } = res.locals;
 
   const { accessToken, refreshToken } = generateTokens(
     user.id,
     workspaceId,
-    user.role,
+    role,
   );
 
   return res
@@ -140,10 +168,19 @@ export const login = catchAsync(async (req: Request, res: Response) => {
     throw new AuthFailureError("Invalid password attempt");
   }
 
+  const permission = await getPermissionWithIds(
+    user.id,
+    user.workspaces[0].toString(),
+  );
+
+  if (!permission) {
+    throw new AuthFailureError("User permissions not allowed");
+  }
+
   const { accessToken, refreshToken } = generateTokens(
     user.id,
-    user.workspaceId,
-    user.role,
+    user.workspaces[0],
+    permission.role,
   );
 
   return res

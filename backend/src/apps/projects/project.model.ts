@@ -44,6 +44,7 @@ projectSchema.set("toJSON", {
   flattenObjectIds: true,
   transform: (_doc, project) => {
     project.id = project._id;
+
     delete project._id;
     delete project.workspaceId;
     delete project.createdAt;
