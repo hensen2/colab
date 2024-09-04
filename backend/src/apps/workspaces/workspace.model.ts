@@ -29,6 +29,7 @@ workspaceSchema.set("toJSON", {
   flattenObjectIds: true,
   transform: (_doc, workspace) => {
     workspace.id = workspace._id;
+    workspace.initial = workspace.name[0];
 
     delete workspace._id;
     delete workspace.createdBy;

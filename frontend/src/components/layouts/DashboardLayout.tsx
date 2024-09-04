@@ -9,12 +9,16 @@ import {
 import { Menu } from "lucide-react";
 import { Navbar, PageHeader } from "@/components/blocks";
 import { Outlet } from "react-router-dom";
-// import useWebSocket from "@/hooks/useWebSocket";
+import { useUser } from "@/features/users/api/useUser";
+import Spinner from "../ui/Spinner";
 
 export default function DashboardLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  // const { isConnected } = useWebSocket();
-  // console.log(isConnected);
+  const { data, isPending } = useUser();
+
+  if (!data && isPending) {
+    return <Spinner />;
+  }
 
   return (
     <>

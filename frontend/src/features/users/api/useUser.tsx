@@ -7,11 +7,9 @@ export const getUser = (): Promise<IUserResponse> => {
   return api.get("/api/users");
 };
 
-export function useUser(isAuthenticated: boolean) {
+export function useUser() {
   return useQuery<IUserResponse, AxiosError>({
     queryKey: ["user"],
     queryFn: getUser,
-    enabled: isAuthenticated,
-    retry: false,
   });
 }

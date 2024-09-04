@@ -19,7 +19,6 @@ const authenticate = catchAsync(
     const { userId, workspaceId, role } = payload;
 
     const user = await getUserWithTokenData(userId, workspaceId);
-    console.log(user);
 
     if (!user) {
       res.clearCookie("refreshToken").clearCookie("accessToken");

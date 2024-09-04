@@ -17,6 +17,8 @@ import {
   AccordionTrigger,
 } from "@/components/ui/Accordion";
 import { useLogout } from "@/features/auth/api/useLogout";
+import { useUser } from "@/features/users/api/useUser";
+import CreateWorkspace from "@/features/workspaces/components/CreateWorkspace";
 
 const navigation = [
   { name: "dashboard", href: "/", icon: Home },
@@ -26,15 +28,11 @@ const navigation = [
   { name: "experiments", href: "/experiments", icon: Files },
   { name: "protocols", href: "/protocols", icon: FlaskConical },
 ];
-const teams = [
-  { id: 1, name: "Tempus AI", href: "#", initial: "T", current: false },
-  { id: 2, name: "Vanderbilt", href: "#", initial: "V", current: false },
-  { id: 3, name: "DARPA", href: "#", initial: "D", current: false },
-];
 
 export default function Navbar() {
   const logout = useLogout();
   const { pathname } = useLocation();
+  const { data } = useUser();
 
   return (
     <>
@@ -70,16 +68,20 @@ export default function Navbar() {
             </ul>
           </li>
           <li>
-            <div className="text-xs font-semibold leading-6 text-gray-400">
-              Your teams
+            <div className="flex flex-1 items-center justify-between">
+              <div className="text-sm font-semibold leading-6 text-gray-400">
+                Workspaces
+              </div>
+              <CreateWorkspace />
             </div>
-            <ul className="-mx-2 mt-2 space-y-1">
-              {teams.map((team) => (
-                <li key={team.name}>
+
+            <ul className="-mx-2 mt-3 space-y-1">
+              {data?.user.workspaces.map((workspace) => (
+                <li key={workspace.id}>
                   <Link
-                    to={team.href}
+                    to={workspace.name}
                     className={cn(
-                      team.current
+                      workspace.name
                         ? "bg-gray-50 text-indigo-600"
                         : "text-gray-700 hover:bg-gray-50 hover:text-indigo-600",
                       "group flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6",
@@ -87,15 +89,15 @@ export default function Navbar() {
                   >
                     <span
                       className={cn(
-                        team.current
+                        workspace.name
                           ? "border-indigo-600 text-indigo-600"
                           : "border-gray-200 text-gray-400 group-hover:border-indigo-600 group-hover:text-indigo-600",
                         "flex h-6 w-6 shrink-0 items-center justify-center rounded-lg border bg-white text-[0.625rem] font-medium",
                       )}
                     >
-                      {team.initial}
+                      {workspace.initial}
                     </span>
-                    <span className="truncate">{team.name}</span>
+                    <span className="truncate">{workspace.name}</span>
                   </Link>
                 </li>
               ))}

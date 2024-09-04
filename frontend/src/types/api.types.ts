@@ -8,10 +8,16 @@ export interface IAuthResponse extends IBaseResponse {
   isAuthenticated: boolean;
 }
 
+export interface IWorkspace {
+  id: string;
+  name: string;
+  initial: string;
+}
+
 export interface IUser {
   email: string;
   name: string;
-  role: "admin" | "user";
+  workspaces: IWorkspace[];
   avatarUrl?: string;
 }
 
@@ -90,4 +96,13 @@ export interface IProjectResponse {
 export interface ICreateProjectData {
   name: string;
   description?: string;
+}
+
+export interface ICreateWorkspaceData {
+  name: string;
+  description?: string;
+}
+
+export interface IWorkspaceResponse {
+  workspace: IWorkspace;
 }
