@@ -2,7 +2,7 @@ export enum StatusType {
   SUCCESS = "Success",
   FAILURE = "Failure",
   RETRY = "Retry",
-  NO_REFRESH_TOKEN = "Unauthenticated",
+  UNAUTHENTICATED = "Unauthenticated",
   INVALID_ACCESS_TOKEN = "Unauthorized",
 }
 

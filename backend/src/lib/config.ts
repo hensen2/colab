@@ -17,4 +17,12 @@ export const tokenInfo = {
   audience: process.env.TOKEN_AUDIENCE as string,
   accessKey: process.env.ACCESS_JWT_SECRET as string,
   refreshKey: process.env.REFRESH_JWT_SECRET as string,
+  workspaceKey: process.env.WORKSPACE_JWT_SECRET as string,
+};
+
+// Constants for expiring cookies in the browser
+export const expireTimes = {
+  oneHourMs: 3600000,
+  oneDayMs: 86400000,
+  oneWeekMs: 604800000,
 };

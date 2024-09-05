@@ -1,26 +1,32 @@
 import express from "express";
+import authRouter, { accessSchema } from "./auth";
+import userRouter from "./users";
+import workspaceRouter from "./workspaces";
+import projectRouter from "./projects";
+import protocolRouter from "./protocols";
+import experimentRouter from "./experiments";
 import validate from "../middleware/validate";
 import authenticate from "../middleware/authenticate";
-import userRouter from "./users";
-import { accessSchema, refreshSchema } from "../auth/auth.validation";
 import { RequestSource } from "../types/request.types";
-import projectRouter from "./projects";
-import experimentRouter from "./experiments";
-import protocolRouter from "./protocols";
+import authorize from "../middleware/authorize";
 
 const apiRouter = express.Router();
 
-// validate and verify jwt tokens for api access
+// Public routes caught before router guards
+apiRouter.use("/auth", authRouter);
+
+// Router guard to validate and verify jwt tokens for API access
 apiRouter.use(
-  validate(refreshSchema, RequestSource.COOKIE),
-  validate(accessSchema, RequestSource.HEADER),
+  validate(accessSchema, RequestSource.COOKIE),
   authenticate,
+  authorize,
 );
 
-// api routes
+// Private routes accessed after auth router guards
 apiRouter.use("/users", userRouter);
+apiRouter.use("/workspaces", workspaceRouter);
 apiRouter.use("/projects", projectRouter);
-apiRouter.use("/experiments", experimentRouter);
 apiRouter.use("/protocols", protocolRouter);
+apiRouter.use("/experiments", experimentRouter);
 
 export default apiRouter;

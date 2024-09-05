@@ -5,7 +5,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 export const createWorkspace = (
   data: ICreateWorkspaceData,
 ): Promise<IWorkspaceResponse> => {
-  return api.post("/api/workspaces", { ...data });
+  return api.post("/workspaces", { ...data });
 };
 
 export function useCreateWorkspace() {
@@ -15,6 +15,7 @@ export function useCreateWorkspace() {
     mutationFn: createWorkspace,
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ["user"] });
+      await queryClient.invalidateQueries({ queryKey: ["auth"] });
     },
   });
 }

@@ -1,31 +1,37 @@
 import { Request, NextFunction, Response } from "express";
-import { verifyTokens } from "../lib/tokens";
+import { verifyAuthTokens } from "../lib/tokens";
 import { BadTokensError, NotFoundError } from "../lib/appError";
-import { getUserWithTokenData } from "../apps/users";
+import { getUserByIdAndEmail } from "../apps/users";
 import catchAsync from "../utils/catchAsync";
 
+/** Middleware function verifies user authentication for all protected API requests. */
 const authenticate = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
-    const payload = verifyTokens(
-      req.cookies.accessToken!,
-      req.cookies.refreshToken,
-    );
+    const { accessToken, refreshToken } = req.cookies;
 
+    const payload = verifyAuthTokens(accessToken, refreshToken);
+
+    // If auth tokens are invalid, then log user out
     if (!payload) {
       res.clearCookie("refreshToken").clearCookie("accessToken");
-      throw new BadTokensError("Invalid tokens: Token data doesn't match");
+      throw new BadTokensError(
+        "Invalid authentication payload. Please enter credentials again.",
+      );
     }
 
-    const { userId, workspaceId, role } = payload;
+    const { userId, email } = payload;
 
-    const user = await getUserWithTokenData(userId, workspaceId);
+    const user = await getUserByIdAndEmail(userId, email);
 
     if (!user) {
       res.clearCookie("refreshToken").clearCookie("accessToken");
-      throw new NotFoundError("User not found");
+      throw new NotFoundError(
+        "User not found while authenticating API request.",
+      );
     }
 
-    res.locals = { workspaceId, user, role };
+    // Sets user authentication data for current request
+    res.locals.user = user;
 
     next();
   },

@@ -1,11 +1,11 @@
 import express from "express";
-import { clientURL, cookieSecret } from "./lib/config";
-import cookieParser from "cookie-parser";
 import cors from "cors";
+import cookieParser from "cookie-parser";
+import { clientURL, cookieSecret } from "./lib/config";
 import morgan from "./middleware/morgan";
-import router from "./lib/router";
 import errorHandler from "./middleware/errorHandler";
 import "./db/mongo"; // initializes mongodb connection
+import apiRouter from "./apps";
 
 // Initialize express app
 const app = express();
@@ -17,7 +17,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser(cookieSecret));
 app.use(morgan);
 
-app.use(router);
+app.use("/api", apiRouter);
 
 app.use(errorHandler);
 

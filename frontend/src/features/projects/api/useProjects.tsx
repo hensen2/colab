@@ -5,7 +5,7 @@ import { QueryClient, useQuery } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 
 const getProjects = (): Promise<IProjectsResponse> => {
-  return api.get("/api/projects");
+  return api.get("/projects");
 };
 
 const queryOptions = {

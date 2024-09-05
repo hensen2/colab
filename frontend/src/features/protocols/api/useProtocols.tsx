@@ -5,7 +5,7 @@ import { QueryClient, useQuery } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 
 const getProtocols = (): Promise<IProtocolsResponse> => {
-  return api.get("/api/protocols");
+  return api.get("/protocols");
 };
 
 const queryOptions = {

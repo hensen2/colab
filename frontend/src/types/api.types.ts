@@ -1,13 +1,4 @@
-export interface IBaseResponse {
-  type: string;
-  message: string;
-}
-
-export interface IAuthResponse extends IBaseResponse {
-  accessToken: string;
-  isAuthenticated: boolean;
-}
-
+/* API entity interfaces */
 export interface IWorkspace {
   id: string;
   name: string;
@@ -18,62 +9,7 @@ export interface IUser {
   email: string;
   name: string;
   workspaces: IWorkspace[];
-  avatarUrl?: string;
-}
-
-export interface IUserResponse extends IBaseResponse {
-  user: IUser;
-}
-
-export interface ILoginUserData {
-  email: string;
-  password: string;
-}
-
-export interface IRegisterUserData {
-  firstName: string;
-  lastName: string;
-  email: string;
-  password: string;
-}
-
-export interface IProtocol {
-  id: string;
-  name: string;
-  description: string;
-  createdBy: string;
-  updatedAt: Date;
-}
-
-export interface IProtocolsResponse {
-  protocols: IProtocol[];
-}
-
-export interface ICreateProtocolData {
-  name: string;
-  description?: string;
-}
-
-export interface IExperiment {
-  id: string;
-  name: string;
-  description: string;
-  createdBy: string;
-  updatedAt: Date;
-}
-
-export interface IExperimentsResponse {
-  experiments: IExperiment[];
-}
-
-export interface IExperimentResponse {
-  experiment: IExperiment;
-}
-
-export interface ICreateExperimentData {
-  name: string;
-  description?: string;
-  protocolId: string;
+  initials: string;
 }
 
 export interface IProject {
@@ -85,17 +21,71 @@ export interface IProject {
   experiments: IExperiment[];
 }
 
-export interface IProjectsResponse {
+export interface IProtocol {
+  id: string;
+  name: string;
+  description: string;
+  createdBy: string;
+  updatedAt: Date;
+}
+
+export interface IExperiment {
+  id: string;
+  name: string;
+  description: string;
+  createdBy: string;
+  updatedAt: Date;
+}
+
+/* API response interfaces */
+export interface IBaseResponse {
+  type: string;
+  message: string;
+}
+
+export interface IAuthResponse extends IBaseResponse {
+  accessToken: string;
+  isAuthenticated: boolean;
+  currentWorkspace: string;
+}
+
+export interface IUserResponse extends IBaseResponse {
+  user: IUser;
+}
+
+export interface IWorkspaceResponse {
+  workspace: IWorkspace;
+}
+
+export interface IProjectsResponse extends IBaseResponse {
   projects: IProject[];
 }
 
-export interface IProjectResponse {
+export interface IProjectResponse extends IBaseResponse {
   project: IProject;
 }
 
-export interface ICreateProjectData {
-  name: string;
-  description?: string;
+export interface IProtocolsResponse extends IBaseResponse {
+  protocols: IProtocol[];
+}
+
+export interface IExperimentsResponse extends IBaseResponse {
+  experiments: IExperiment[];
+}
+
+export interface IExperimentResponse extends IBaseResponse {
+  experiment: IExperiment;
+}
+
+/* API mutation payload interfaces */
+export interface ILoginUserData {
+  email: string;
+  password: string;
+}
+
+export interface IRegisterUserData extends ILoginUserData {
+  firstName: string;
+  lastName: string;
 }
 
 export interface ICreateWorkspaceData {
@@ -103,6 +93,18 @@ export interface ICreateWorkspaceData {
   description?: string;
 }
 
-export interface IWorkspaceResponse {
-  workspace: IWorkspace;
+export interface ICreateProjectData {
+  name: string;
+  description?: string;
+}
+
+export interface ICreateProtocolData {
+  name: string;
+  description?: string;
+}
+
+export interface ICreateExperimentData {
+  name: string;
+  description?: string;
+  protocolId: string;
 }

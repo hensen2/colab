@@ -5,7 +5,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 export const createProject = (
   data: ICreateProjectData,
 ): Promise<IProjectsResponse> => {
-  return api.post("/api/projects", { ...data });
+  return api.post("/projects", { ...data });
 };
 
 export function useCreateProject() {

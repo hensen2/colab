@@ -5,7 +5,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 export const createProtocol = (
   data: ICreateProtocolData,
 ): Promise<IProtocolsResponse> => {
-  return api.post("/api/protocols", { ...data });
+  return api.post("/protocols", { ...data });
 };
 
 export function useCreateProtocol() {

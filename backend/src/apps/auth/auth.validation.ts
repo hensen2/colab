@@ -1,28 +1,22 @@
 import Joi from "joi";
-import { BadAuthRequestError } from "../lib/appError";
+import { BadAuthRequestError, BadTokensError } from "../../lib/appError";
 
 export const refreshSchema = Joi.object({
   refreshToken: Joi.string().error(new BadAuthRequestError()).required(),
   accessToken: Joi.string().optional(),
+  sid: Joi.string().error(new BadAuthRequestError()).required(),
 })
-  .min(1)
-  .max(2)
+  .min(2)
+  .max(3)
   .required();
 
 export const accessSchema = Joi.object({
-  authorization: Joi.string()
-    .custom((value: string, helpers) => {
-      if (!value.startsWith("Bearer ")) {
-        return helpers.error("Invalid auth header");
-      }
-      const accessToken = value.split(" ")[1];
-      if (!accessToken) {
-        return helpers.error("Invalid auth bearer");
-      }
-      return accessToken;
-    })
-    .required(),
-}).unknown(true);
+  refreshToken: Joi.string().error(new BadTokensError()).required(),
+  accessToken: Joi.string().error(new BadTokensError()).required(),
+  sid: Joi.string().error(new BadTokensError()).required(),
+})
+  .length(3)
+  .required();
 
 export const registerSchema = Joi.object({
   firstName: Joi.string().min(1).max(63).trim().required(),

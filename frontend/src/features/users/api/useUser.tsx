@@ -4,7 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 
 export const getUser = (): Promise<IUserResponse> => {
-  return api.get("/api/users");
+  return api.get("/users");
 };
 
 export function useUser() {

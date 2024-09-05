@@ -89,6 +89,15 @@ export class RefreshTokenError extends AppError {
   }
 }
 
+export class WorkspaceTokenError extends AppError {
+  constructor(message = "Invalid workspace token") {
+    super(ErrorType.BAD_TOKENS, StatusCode.UNAUTHENTICATED, message);
+
+    Object.setPrototypeOf(this, new.target.prototype);
+    Error.captureStackTrace(this);
+  }
+}
+
 export class AuthFailureError extends AppError {
   constructor(message = "Invalid auth credentials") {
     super(ErrorType.UNAUTHENTICATED, StatusCode.UNAUTHENTICATED, message);

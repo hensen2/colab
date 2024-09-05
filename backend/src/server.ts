@@ -1,46 +1,56 @@
 import { Server } from "@hocuspocus/server";
+import { encodeStateAsUpdate, applyUpdate } from "yjs";
 import app from "./app";
+import { getUserByIdAndEmail } from "./apps/users";
+import { getDocumentWithIds, updateDocumentState } from "./apps/documents";
 import { port } from "./lib/config";
 import logger from "./lib/logger";
-import { verifyAccessToken } from "./lib/tokens";
-import { getUserWithTokenData } from "./apps/users";
+import { verifyAccessToken, verifyWorkspaceToken } from "./lib/tokens";
 import { AuthFailureError, NotFoundError } from "./lib/appError";
-import { encodeStateAsUpdate, applyUpdate } from "yjs";
-import { getDocumentWithIds, updateDocumentState } from "./apps/documents";
 
 const server = app.listen(port, () => {
   logger.info(`Server running at port: ${port}`);
 });
 
+// Websocket server configuration
 const wss = Server.configure({
   port: 8081,
   quiet: true,
   async onListen({ port }) {
-    logger.info(`WebSocket server running at port: ${port}`);
+    logger.info(`WebSocket server running at port: ${port}.`);
   },
   async onConnect({ socketId }) {
-    logger.info(`WebSocket ID connected: ${socketId}`);
+    logger.info(`WebSocket ID connected: ${socketId}.`);
   },
-  async onAuthenticate({ token }) {
-    const { userId, workspaceId, role } = verifyAccessToken(token);
+  // Event listener for websocket user auth
+  async onAuthenticate(data) {
+    console.log(data);
+    // Verify user is authenticated
+    const { userId, email } = verifyAccessToken(data.token);
 
-    const user = await getUserWithTokenData(userId, workspaceId);
+    const user = await getUserByIdAndEmail(userId, email);
 
     if (!user) {
       throw new AuthFailureError("User not authenticated");
     }
 
+    // Verify user is authorized
+    const { workspaceId, role } = verifyWorkspaceToken(data.token);
+
+    // Returned data gets passed to websocket connection context
     return {
       name: `${user.firstName} ${user.lastName}`,
       avatarUrl: user.avatarUrl,
-      role,
       workspaceId,
+      role,
     };
   },
+  // Event listener for loading persisted data to client
   async onLoadDocument({ document, documentName, context }) {
-    const { workspaceId } = context;
-
-    const loadedDoc = await getDocumentWithIds(workspaceId, documentName);
+    const loadedDoc = await getDocumentWithIds(
+      context.workspaceId,
+      documentName,
+    );
 
     if (!loadedDoc || !loadedDoc.state) {
       throw new NotFoundError("Document not found");
@@ -51,12 +61,11 @@ const wss = Server.configure({
     console.log(document);
     return document;
   },
+  // Event listener for persisting data from client
   async onStoreDocument({ document, documentName, context }) {
-    const { workspaceId } = context;
-
     const state = Buffer.from(encodeStateAsUpdate(document));
 
-    await updateDocumentState(workspaceId, documentName, state);
+    await updateDocumentState(context.workspaceId, documentName, state);
   },
 });
 

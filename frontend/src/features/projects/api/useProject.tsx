@@ -4,7 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 
 const getProject = (projectId: string): Promise<IProjectResponse> => {
-  return api.get(`/api/projects/${projectId}`);
+  return api.get(`/projects/${projectId}`);
 };
 
 // function projectOptions(projectId: string) {

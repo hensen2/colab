@@ -44,6 +44,7 @@ const userSchema = new Schema<IUser>(
   },
 );
 
+userSchema.index({ email: 1 });
 userSchema.index({ _id: 1, workspaces: 1 });
 
 userSchema.set("toJSON", {
@@ -51,7 +52,10 @@ userSchema.set("toJSON", {
   transform: (_doc, user) => {
     user.name = `${user.firstName} ${user.lastName}`;
 
-    if (!user.avatarUrl) delete user.avatarUrl;
+    if (!user.avatarUrl) {
+      delete user.avatarUrl;
+      user.initials = `${user.firstName[0]}${user.lastName[0]}`;
+    }
 
     delete user._id;
     delete user.firstName;

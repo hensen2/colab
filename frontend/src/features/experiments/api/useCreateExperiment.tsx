@@ -5,7 +5,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 export const createExperiment = (
   data: ICreateExperimentData,
 ): Promise<IExperimentsResponse> => {
-  return api.post("/api/experiments", { ...data });
+  return api.post("/experiments", { ...data });
 };
 
 export function useCreateExperiment() {
