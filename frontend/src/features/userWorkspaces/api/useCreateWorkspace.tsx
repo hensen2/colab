@@ -15,7 +15,6 @@ export function useCreateWorkspace() {
     mutationFn: createWorkspace,
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ["user"] });
-      await queryClient.invalidateQueries({ queryKey: ["auth"] });
     },
   });
 }

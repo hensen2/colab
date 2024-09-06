@@ -1,5 +1,5 @@
 import { columns } from "@/features/projects/components/ProjectsColumns";
-import { DataTable } from "@/components/blocks";
+import { DataTable } from "@/components/common";
 import { useProjects } from "@/features/projects/api/useProjects";
 import CreateProject from "@/features/projects/components/CreateProject";
 

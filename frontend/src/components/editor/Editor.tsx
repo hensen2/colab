@@ -1,9 +1,9 @@
 import MenuBar from "./MenuBar";
 import { EditorContent, useEditor } from "@tiptap/react";
-import extensions from "./extensions";
 import Collaboration from "@tiptap/extension-collaboration";
 import CollaborationCursor from "@tiptap/extension-collaboration-cursor";
 import type { HocuspocusProvider } from "@hocuspocus/provider";
+import Extensions from "./Extensions";
 
 interface IEditorProps {
   provider: HocuspocusProvider;
@@ -12,7 +12,7 @@ interface IEditorProps {
 const Editor = ({ provider }: IEditorProps) => {
   const editor = useEditor({
     extensions: [
-      ...extensions,
+      ...Extensions,
       Collaboration.configure({
         document: provider.document,
       }),

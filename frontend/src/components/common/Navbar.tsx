@@ -1,10 +1,8 @@
 /* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 import {
-  Calendar,
   FolderClosed,
   Files,
-  Users,
   FlaskConical,
   Home,
   LogOut,
@@ -19,15 +17,13 @@ import {
   AccordionTrigger,
 } from "@/components/ui/Accordion";
 import { useLogout } from "@/features/auth/api/useLogout";
-import { useUser } from "@/features/users/api/useUser";
-import CreateWorkspace from "@/features/workspaces/components/CreateWorkspace";
-import { useChangeWorkspace } from "@/features/users/api/useChangeWorkspace";
+import { useUserWorkspace } from "@/features/userWorkspaces/api/useUserWorkspace";
+import CreateWorkspace from "@/features/userWorkspaces/components/CreateWorkspace";
+import { useChangeWorkspace } from "@/features/userWorkspaces/api/useChangeWorkspace";
 
 const navigation = [
   { name: "dashboard", href: "/", icon: Home },
-  { name: "teams", href: "/teams", icon: Users },
   { name: "projects", href: "/projects", icon: FolderClosed },
-  { name: "calendar", href: "/calendar", icon: Calendar },
   { name: "experiments", href: "/experiments", icon: Files },
   { name: "protocols", href: "/protocols", icon: FlaskConical },
 ];
@@ -35,7 +31,7 @@ const navigation = [
 export default function Navbar() {
   const { pathname } = useLocation();
   const navigate = useNavigate();
-  const { data } = useUser();
+  const { data } = useUserWorkspace();
   const changeWorkspace = useChangeWorkspace();
   const logout = useLogout();
 
@@ -141,10 +137,7 @@ export default function Navbar() {
                   </div>
                 </AccordionTrigger>
                 <AccordionContent className="flex-col items-center space-y-3 px-6">
-                  <button
-                    className="group flex w-full gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 text-gray-700 hover:bg-gray-50 hover:text-indigo-600"
-                    onClick={() => logout.mutate()}
-                  >
+                  <button className="group flex w-full gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 text-gray-700 hover:bg-gray-50 hover:text-indigo-600">
                     <Settings
                       className="h-6 w-6 shrink-0 text-gray-400 group-hover:text-indigo-600"
                       aria-hidden="true"

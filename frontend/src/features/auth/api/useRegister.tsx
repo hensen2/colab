@@ -16,9 +16,11 @@ export const registerUser = (
 
 export function useRegister() {
   const queryClient = useQueryClient();
+  // Use toast to render auth server error messages
   const { toast } = useToast();
 
-  const setToken = useCallback(
+  // Manually update cache instead of invalidating
+  const setAuth = useCallback(
     (data: IAuthResponse) => queryClient.setQueryData(["auth"], data),
     [queryClient],
   );
@@ -26,11 +28,9 @@ export function useRegister() {
   return useMutation({
     mutationFn: registerUser,
     onSuccess: (data) => {
-      setToken(data);
+      setAuth(data);
     },
     onError: (error: AxiosError<any>) => {
-      console.log(error.response?.data.errorType);
-
       toast({
         variant: "destructive",
         title: error.response?.data.errorType,

@@ -7,14 +7,14 @@ import {
   SheetTrigger,
 } from "@/components/ui/Sheet";
 import { Menu } from "lucide-react";
-import { Navbar, PageHeader } from "@/components/blocks";
+import { Navbar, PageHeader } from "@/components/common";
 import { Outlet } from "react-router-dom";
-import { useUser } from "@/features/users/api/useUser";
+import { useUserWorkspace } from "@/features/userWorkspaces/api/useUserWorkspace";
 import Spinner from "../ui/Spinner";
 
 export default function DashboardLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const { data, isPending } = useUser();
+  const { data, isPending } = useUserWorkspace();
 
   if (!data || isPending) {
     return <Spinner />;

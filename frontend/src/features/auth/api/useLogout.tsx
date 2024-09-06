@@ -9,7 +9,7 @@ export const logoutUser = (): Promise<void> => {
 export function useLogout() {
   const queryClient = useQueryClient();
 
-  const setToken = useCallback(
+  const setAuth = useCallback(
     () => queryClient.setQueryData(["auth"], null),
     [queryClient],
   );
@@ -17,8 +17,7 @@ export function useLogout() {
   return useMutation({
     mutationFn: logoutUser,
     onSuccess: () => {
-      setToken();
-      // api.defaults.headers.common.Authorization = `Bearer ${null}`;
+      setAuth();
     },
   });
 }

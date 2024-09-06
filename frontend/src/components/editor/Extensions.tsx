@@ -3,7 +3,7 @@ import Highlight from "@tiptap/extension-highlight";
 import TaskList from "@tiptap/extension-task-list";
 import TaskItem from "@tiptap/extension-task-item";
 
-const extensions = [
+const Extensions = [
   StarterKit.configure({
     bulletList: {
       HTMLAttributes: {
@@ -27,4 +27,4 @@ const extensions = [
   TaskItem,
 ];
 
-export default extensions;
+export default Extensions;

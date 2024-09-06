@@ -1,5 +1,5 @@
 import { columns } from "@/features/experiments/components/ExperimentColumns";
-import { DataTable } from "@/components/blocks";
+import { DataTable } from "@/components/common";
 import CreateExperiment from "@/features/experiments/components/CreateExperiment";
 import { useExperiments } from "@/features/experiments/api/useExperiments";
 

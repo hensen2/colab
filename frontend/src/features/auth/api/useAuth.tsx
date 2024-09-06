@@ -10,7 +10,7 @@ export const getToken = async (): Promise<IAuthResponse> => {
 const queryOptions = {
   queryKey: ["auth"],
   queryFn: getToken,
-  refetchInterval: 1000 * 60 * 10,
+  refetchInterval: 1000 * 60 * 10, // refetch every 10min to refresh auth
 };
 
 export const authLoader = (queryClient: QueryClient) => async () => {

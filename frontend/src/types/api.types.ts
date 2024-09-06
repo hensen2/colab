@@ -45,12 +45,10 @@ export interface IBaseResponse {
 }
 
 export interface IAuthResponse extends IBaseResponse {
-  accessToken: string;
   isAuthenticated: boolean;
-  currentWorkspace: string;
 }
 
-export interface IUserResponse extends IBaseResponse {
+export interface IUserWorkspaceResponse extends IBaseResponse {
   user: IUser;
   colabToken: string;
 }

@@ -29,15 +29,6 @@ const createRouter = (queryClient: QueryClient) =>
           },
         },
         {
-          path: "teams",
-          lazy: async () => {
-            const { TeamsPage } = await import("./app/Teams");
-            return {
-              Component: TeamsPage,
-            };
-          },
-        },
-        {
           path: "projects",
           lazy: async () => {
             const { ProjectsPage } = await import("./app/Projects");
@@ -53,15 +44,6 @@ const createRouter = (queryClient: QueryClient) =>
             const { ProjectPage } = await import("./app/Project");
             return {
               Component: ProjectPage,
-            };
-          },
-        },
-        {
-          path: "calendar",
-          lazy: async () => {
-            const { CalendarPage } = await import("./app/Calendar");
-            return {
-              Component: CalendarPage,
             };
           },
         },

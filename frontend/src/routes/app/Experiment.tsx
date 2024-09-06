@@ -7,12 +7,12 @@ import {
   HocuspocusProvider,
   HocuspocusProviderWebsocket,
 } from "@hocuspocus/provider";
-import Editor from "@/features/editor/components/Editor";
-import { useUser } from "@/features/users/api/useUser";
+import Editor from "@/components/editor/Editor";
+import { useUserWorkspace } from "@/features/userWorkspaces/api/useUserWorkspace";
 
 export const ExperimentPage = () => {
   const { state: experiment }: { state: IExperiment } = useLocation();
-  const { data } = useUser();
+  const { data } = useUserWorkspace();
 
   const [websocketProvider, setWebsocketProvider] =
     useState<HocuspocusProviderWebsocket | null>(null);

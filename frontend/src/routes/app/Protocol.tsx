@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-import Editor from "@/features/editor/components/Editor";
-import { useUser } from "@/features/users/api/useUser";
+import Editor from "@/components/editor/Editor";
+import { useUserWorkspace } from "@/features/userWorkspaces/api/useUserWorkspace";
 import { IProtocol } from "@/types/api.types";
 import { HocuspocusProvider } from "@hocuspocus/provider";
 import { useMemo } from "react";
@@ -8,7 +8,7 @@ import { useLocation } from "react-router-dom";
 
 export const ProtocolPage = () => {
   const { state: protocol }: { state: IProtocol } = useLocation();
-  const { data } = useUser();
+  const { data } = useUserWorkspace();
 
   const provider = useMemo(() => {
     return new HocuspocusProvider({

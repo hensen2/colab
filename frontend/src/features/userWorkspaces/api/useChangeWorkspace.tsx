@@ -1,10 +1,10 @@
 import { api } from "@/lib/api";
-import { IUserResponse } from "@/types/api.types";
+import { IUserWorkspaceResponse } from "@/types/api.types";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 export const changeWorkspace = (data: {
   workspaceId: string;
-}): Promise<IUserResponse> => {
+}): Promise<IUserWorkspaceResponse> => {
   return api.patch("/users", { ...data });
 };
 

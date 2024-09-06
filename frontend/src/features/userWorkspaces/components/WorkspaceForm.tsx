@@ -15,7 +15,7 @@ import { Input } from "@/components/ui/Input";
 import { useCreateWorkspace } from "../api/useCreateWorkspace";
 import { Dispatch, SetStateAction } from "react";
 import { Textarea } from "@/components/ui/Textarea";
-import { useUser } from "@/features/users/api/useUser";
+import { useUserWorkspace } from "@/features/userWorkspaces/api/useUserWorkspace";
 
 const formSchema = z.object({
   name: z
@@ -36,7 +36,7 @@ interface ProtocolFormProps {
 }
 
 export default function WorkspaceForm({ setOpen }: ProtocolFormProps) {
-  const { data } = useUser();
+  const { data } = useUserWorkspace();
   const { mutate: createWorkspace } = useCreateWorkspace();
 
   const form = useForm<z.infer<typeof formSchema>>({

@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { columns } from "@/features/projects/components/ProjectColumns";
-import { DataTable } from "@/components/blocks";
+import { DataTable } from "@/components/common";
 import { useProject } from "@/features/projects/api/useProject";
 import { useLocation } from "react-router-dom";
 import { IProject } from "@/types/api.types";
