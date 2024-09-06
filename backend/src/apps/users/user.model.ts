@@ -37,6 +37,10 @@ const userSchema = new Schema<IUser>(
     workspaces: [
       { type: Schema.Types.ObjectId, ref: "Workspace", required: true },
     ],
+    currentWorkspace: {
+      type: Schema.Types.ObjectId,
+      required: true,
+    },
   },
   {
     versionKey: false,

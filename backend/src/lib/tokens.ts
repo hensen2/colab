@@ -1,16 +1,12 @@
 import jwt, { JwtPayload } from "jsonwebtoken";
 import { isObjectIdOrHexString } from "mongoose";
 import { tokenInfo } from "./config";
-import {
-  AccessTokenError,
-  RefreshTokenError,
-  WorkspaceTokenError,
-} from "./appError";
+import { AccessTokenError, RefreshTokenError } from "./appError";
 
 export interface ITokenPayload extends JwtPayload {
   uid?: string; // userId
   wid?: string; // workspaceId
-  role?: "admin" | "user";
+  token?: string; // colabToken
 }
 
 // Extracts env token data from app config
@@ -73,29 +69,35 @@ export const verifyAuthTokens = (accessToken: string, refreshToken: string) => {
 };
 
 /** Verifies workspace session token and returns payload. */
-export const verifyWorkspaceToken = (workspaceToken: string) => {
-  const payload = jwt.verify(workspaceToken, workspaceKey, {
-    audience,
-    issuer,
-  }) as ITokenPayload;
+export const verifyWorkspaceToken = (
+  workspaceToken: string,
+  subject: string,
+) => {
+  try {
+    const payload = jwt.verify(workspaceToken, workspaceKey, {
+      audience,
+      issuer,
+      subject,
+    }) as ITokenPayload;
 
-  // Checks if necessary data is present and correct then returns data
-  if (
-    !payload.sub ||
-    !payload.uid ||
-    !payload.wid ||
-    !payload.role ||
-    !isObjectIdOrHexString(payload.uid) ||
-    !isObjectIdOrHexString(payload.wid)
-  ) {
-    throw new WorkspaceTokenError();
-  } else {
-    return {
-      userId: payload.uid,
-      email: payload.sub,
-      workspaceId: payload.wid,
-      role: payload.role,
-    };
+    // Checks if necessary data is present and correct then returns data
+    if (
+      !payload.sub ||
+      !payload.uid ||
+      !payload.wid ||
+      !payload.token ||
+      !isObjectIdOrHexString(payload.uid) ||
+      !isObjectIdOrHexString(payload.wid)
+    ) {
+      return null;
+    } else {
+      return {
+        workspaceId: payload.wid,
+        colabToken: payload.token,
+      };
+    }
+  } catch (err) {
+    return null;
   }
 };
 
@@ -132,12 +134,16 @@ export const generateWorkspaceToken = (
   userId: string,
   email: string,
   workspaceId: string,
-  role: "admin" | "user",
+  colabToken: string,
 ) => {
-  return jwt.sign({ uid: userId, wid: workspaceId, role }, workspaceKey, {
-    expiresIn: "7d",
-    subject: email,
-    audience,
-    issuer,
-  });
+  return jwt.sign(
+    { uid: userId, wid: workspaceId, token: colabToken },
+    workspaceKey,
+    {
+      expiresIn: "7d",
+      subject: email,
+      audience,
+      issuer,
+    },
+  );
 };

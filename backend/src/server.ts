@@ -6,7 +6,12 @@ import { getDocumentWithIds, updateDocumentState } from "./apps/documents";
 import { port } from "./lib/config";
 import logger from "./lib/logger";
 import { verifyAccessToken, verifyWorkspaceToken } from "./lib/tokens";
-import { AuthFailureError, NotFoundError } from "./lib/appError";
+import {
+  AuthFailureError,
+  NotFoundError,
+  WorkspaceTokenError,
+} from "./lib/appError";
+import { getPermissionByIds } from "./apps/permissions";
 
 const server = app.listen(port, () => {
   logger.info(`Server running at port: ${port}`);
@@ -23,26 +28,60 @@ const wss = Server.configure({
     logger.info(`WebSocket ID connected: ${socketId}.`);
   },
   // Event listener for websocket user auth
-  async onAuthenticate(data) {
-    console.log(data);
+  async onAuthenticate({ requestHeaders, token }) {
+    if (!requestHeaders.cookie) {
+      throw new AuthFailureError("No auth cookies received.");
+    }
+
+    // Next steps extracts auth cookies from string to keyed object
+    const cookiesHeader = requestHeaders.cookie.split("; ");
+    const cookies: { [key: string]: string } = {};
+
+    // Populate cookies object key:value pairs
+    cookiesHeader.forEach((cookie) => {
+      const arr = cookie.split("=");
+      cookies[arr[0]] = arr[1];
+    });
+
+    if (!cookies.accessToken || !cookies.sid) {
+      throw new AuthFailureError("Missing auth cookies.");
+    }
+
     // Verify user is authenticated
-    const { userId, email } = verifyAccessToken(data.token);
+    const { userId, email } = verifyAccessToken(cookies.accessToken);
 
     const user = await getUserByIdAndEmail(userId, email);
 
     if (!user) {
-      throw new AuthFailureError("User not authenticated");
+      throw new AuthFailureError("User not authenticated.");
     }
 
     // Verify user is authorized
-    const { workspaceId, role } = verifyWorkspaceToken(data.token);
+    const payload = verifyWorkspaceToken(cookies.sid, user.email);
+
+    if (
+      !payload ||
+      payload.workspaceId !== user.currentWorkspace.toString() ||
+      payload.colabToken !== token
+    ) {
+      throw new WorkspaceTokenError();
+    }
+
+    // Fetch user permissions
+    const permission = await getPermissionByIds(userId, payload.workspaceId);
+
+    if (!permission || payload.colabToken !== permission.colabToken) {
+      throw new AuthFailureError(
+        "No user permissions found for this user workspace.",
+      );
+    }
 
     // Returned data gets passed to websocket connection context
     return {
       name: `${user.firstName} ${user.lastName}`,
       avatarUrl: user.avatarUrl,
-      workspaceId,
-      role,
+      workspaceId: payload.workspaceId,
+      role: permission.role,
     };
   },
   // Event listener for loading persisted data to client
@@ -58,7 +97,6 @@ const wss = Server.configure({
 
     const uint8 = new Uint8Array(loadedDoc.state);
     applyUpdate(document, uint8);
-    console.log(document);
     return document;
   },
   // Event listener for persisting data from client

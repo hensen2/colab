@@ -1,8 +1,9 @@
 import express from "express";
-import { getUserSession } from "./user.controller";
+import { changeUserWorkspace, getUserSession } from "./user.controller";
 
 const userRouter = express.Router();
 
 userRouter.get("/", getUserSession);
+userRouter.patch("/", changeUserWorkspace);
 
 export default userRouter;

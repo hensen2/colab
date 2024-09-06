@@ -1,5 +1,6 @@
 import type { Request, Response } from "express";
 import bcrypt from "bcrypt";
+import short from "short-uuid";
 import catchAsync from "../../utils/catchAsync";
 import { expireTimes } from "../../lib/config";
 import {
@@ -7,7 +8,6 @@ import {
   generateAuthTokens,
   generateWorkspaceToken,
   verifyRefreshToken,
-  verifyWorkspaceToken,
 } from "../../lib/tokens";
 import {
   AuthFailureError,
@@ -39,6 +39,7 @@ export const getAuthToken = catchAsync(async (req: Request, res: Response) => {
   if (!user) {
     res.clearCookie("refreshToken");
     res.clearCookie("accessToken");
+    res.clearCookie("sid");
     throw new NotFoundError(
       "User could not be found with invalid refresh token data.",
     );
@@ -91,8 +92,6 @@ export const register = catchAsync(async (req: Request, res: Response) => {
       throw new BadRequestError("Unable to setup new user workspace.");
     }
 
-    const workspaceId = workspace.id;
-
     // Creates a new user
     const [user] = await createUser(
       {
@@ -100,7 +99,8 @@ export const register = catchAsync(async (req: Request, res: Response) => {
         lastName,
         email,
         passwordHash,
-        workspaces: [workspaceId],
+        workspaces: [workspace.id],
+        currentWorkspace: workspace.id,
       },
       { session },
     );
@@ -109,14 +109,16 @@ export const register = catchAsync(async (req: Request, res: Response) => {
       throw new BadRequestError("Unable to create new user account.");
     }
 
-    const userId = user.id;
+    // Generate random uuid for collaboration auth token
+    const colabToken = short.generate();
 
     // Creates a new admin permission for the user's default workspace
     const [permission] = await createPermission(
       {
-        workspaceId,
-        userId,
+        workspaceId: workspace.id,
+        userId: user.id,
         role: "admin",
+        colabToken,
       },
       { session },
     );
@@ -126,10 +128,10 @@ export const register = catchAsync(async (req: Request, res: Response) => {
     }
 
     // Set locals object with user data to be used out of transaction scope
-    res.locals = { userId, workspaceId, role: permission.role };
+    res.locals = { userId: user.id, workspaceId: workspace.id, colabToken };
   });
 
-  const { userId, workspaceId, role } = res.locals;
+  const { userId, workspaceId, colabToken } = res.locals;
 
   // Generates fresh auth tokens using user data
   const { accessToken, refreshToken } = generateAuthTokens(userId, email);
@@ -139,7 +141,7 @@ export const register = catchAsync(async (req: Request, res: Response) => {
     userId,
     email,
     workspaceId,
-    role,
+    colabToken,
   );
 
   // Set response cookies and send data
@@ -185,39 +187,24 @@ export const login = catchAsync(async (req: Request, res: Response) => {
     throw new AuthFailureError("Incorrect password entered, please try again.");
   }
 
+  const workspaceId = user.currentWorkspace.toString();
+
+  // Fetches user workspace permissions to initialize session
+  const permission = await getPermissionByIds(user.id, workspaceId);
+
+  if (!permission) {
+    throw new AuthFailureError("No user permissions found for this workspace.");
+  }
+
   // Generates fresh auth tokens using user data
   const { accessToken, refreshToken } = generateAuthTokens(user.id, user.email);
 
-  // Verify workspace session if it exists to load recent session, else load default session
-  if (req.cookies.sid) {
-    const { workspaceId, role } = verifyWorkspaceToken(req.cookies.sid);
-
-    // Set locals to be used out of scope
-    res.locals = { workspaceId, role };
-  } else {
-    const workspaceId = user.workspaces[0].toString();
-
-    // Fetch default user workspace and permission
-    const permission = await getPermissionByIds(user.id, workspaceId);
-
-    if (!permission) {
-      throw new AuthFailureError(
-        "No user permissions found for this user workspace.",
-      );
-    }
-
-    // Set locals to be used out of scope
-    res.locals = { workspaceId, role: permission.role };
-  }
-
-  const { workspaceId, role } = res.locals;
-
-  // Generates fresh workspace session token
+  // Generates fresh workspace session token using user data
   const workspaceToken = generateWorkspaceToken(
     user.id,
     user.email,
     workspaceId,
-    role,
+    permission.colabToken,
   );
 
   // Set response auth cookies and send data
@@ -252,6 +239,7 @@ export const logout = (_req: Request, res: Response) => {
     .status(StatusCode.SUCCESS)
     .clearCookie("refreshToken")
     .clearCookie("accessToken")
+    .clearCookie("sid")
     .json({
       type: StatusType.SUCCESS,
       message: "User successfully logged out.",

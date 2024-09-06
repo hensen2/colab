@@ -7,6 +7,7 @@ export interface IUser {
   passwordHash: string;
   avatarUrl?: string;
   workspaces: Types.ObjectId[];
+  currentWorkspace: Types.ObjectId;
 }
 
 export type UserDoc = Document<unknown, {}, IUser> &

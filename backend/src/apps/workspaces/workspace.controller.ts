@@ -1,53 +1,17 @@
 import { Request, Response } from "express";
+import short from "short-uuid";
 import catchAsync from "../../utils/catchAsync";
-import { createWorkspace, getWorkspaceById } from "./";
-import { BadRequestError, NotFoundError } from "../../lib/appError";
+import { createWorkspace } from "./";
+import { BadRequestError } from "../../lib/appError";
 import { StatusCode, StatusType } from "../../types/response.types";
 import { runTransaction } from "../../db/runTransaction";
 import { createPermission } from "../permissions";
 import { addNewUserWorkspace } from "../users";
-import { generateAuthTokens, generateWorkspaceToken } from "../../lib/tokens";
+import { generateAuthTokens } from "../../lib/tokens";
 import { expireTimes } from "../../lib/config";
 
 // Extract expiration constants
-const { oneHourMs, oneDayMs, oneWeekMs } = expireTimes;
-
-/** Route controller that handles fetching workspace session data. */
-export const getWorkspaceSession = catchAsync(
-  async (_req: Request, res: Response) => {
-    // Extract session data for current request
-    const { user, workspaceId, role } = res.locals;
-
-    // Find workspace for current client session
-    const workspace = await getWorkspaceById(workspaceId);
-
-    if (!workspace) {
-      throw new NotFoundError("Workspace session not found.");
-    }
-
-    // Generates fresh workspace session token
-    const workspaceToken = generateWorkspaceToken(
-      user.id,
-      user.email,
-      workspaceId,
-      role,
-    );
-
-    // Set response workspace session cookie and send data
-    return res
-      .status(StatusCode.SUCCESS)
-      .cookie("sid", workspaceToken, {
-        httpOnly: true,
-        path: "/",
-        maxAge: oneWeekMs, // expires cookie in 7d
-      })
-      .json({
-        type: StatusType.SUCCESS,
-        message: "Retrieved workspace session.",
-        workspace,
-      });
-  },
-);
+const { oneHourMs, oneDayMs } = expireTimes;
 
 export const createNewWorkspace = catchAsync(
   async (req: Request, res: Response) => {
@@ -70,12 +34,16 @@ export const createNewWorkspace = catchAsync(
 
       res.locals.workspaceId = workspace.id;
 
+      // Generate random uuid for collaboration auth token
+      const colabToken = short.generate();
+
       // Create new user permission
       const [permission] = await createPermission(
         {
           workspaceId: workspace.id,
           userId,
           role: "admin",
+          colabToken,
         },
         { session },
       );

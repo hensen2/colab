@@ -16,6 +16,10 @@ const permissionSchema = new Schema<IPermission>(
       enum: ["admin", "user"],
       required: true,
     },
+    colabToken: {
+      type: String,
+      required: true,
+    },
   },
   {
     versionKey: false,
