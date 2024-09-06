@@ -1,3 +1,5 @@
+/* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
+/* eslint-disable jsx-a11y/click-events-have-key-events */
 import {
   Calendar,
   FolderClosed,
@@ -9,7 +11,7 @@ import {
   Settings,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import {
   Accordion,
   AccordionContent,
@@ -19,7 +21,7 @@ import {
 import { useLogout } from "@/features/auth/api/useLogout";
 import { useUser } from "@/features/users/api/useUser";
 import CreateWorkspace from "@/features/workspaces/components/CreateWorkspace";
-import { useWorkspace } from "@/features/workspaces/api/useWorkspace";
+import { useChangeWorkspace } from "@/features/users/api/useChangeWorkspace";
 
 const navigation = [
   { name: "dashboard", href: "/", icon: Home },
@@ -31,10 +33,11 @@ const navigation = [
 ];
 
 export default function Navbar() {
-  const logout = useLogout();
   const { pathname } = useLocation();
-  const user = useUser();
-  const workspace = useWorkspace();
+  const navigate = useNavigate();
+  const { data } = useUser();
+  const changeWorkspace = useChangeWorkspace();
+  const logout = useLogout();
 
   return (
     <>
@@ -78,20 +81,30 @@ export default function Navbar() {
             </div>
 
             <ul className="-mx-2 mt-3 space-y-1">
-              {user.data?.user.workspaces.map((ws) => (
+              {data?.user.workspaces.map((ws) => (
                 <li
                   key={ws.id}
                   className={cn(
-                    ws.id === workspace.data?.workspace.id
-                      ? "bg-gray-50 text-indigo-600"
-                      : "text-gray-700 hover:bg-gray-50 hover:text-indigo-600",
+                    ws.id === data.user.currentWorkspace
+                      ? "cursor-default bg-gray-50 text-indigo-600"
+                      : "cursor-pointer text-gray-700 hover:bg-gray-50 hover:text-indigo-600",
                     "group flex justify-between gap-x-3 rounded-md p-2 text-sm font-semibold leading-6",
                   )}
+                  onClick={() => {
+                    changeWorkspace.mutate(
+                      { workspaceId: ws.id },
+                      {
+                        onSuccess: () => {
+                          navigate("/", { replace: true });
+                        },
+                      },
+                    );
+                  }}
                 >
                   <div className="flex gap-x-3">
                     <span
                       className={cn(
-                        ws.id === workspace.data?.workspace.id
+                        ws.id === data.user.currentWorkspace
                           ? "border-indigo-600 text-indigo-600"
                           : "border-gray-200 text-gray-400 group-hover:border-indigo-600 group-hover:text-indigo-600",
                         "flex h-6 w-6 shrink-0 items-center justify-center rounded-lg border bg-white text-[0.625rem] font-medium",
@@ -102,13 +115,15 @@ export default function Navbar() {
                     <span className="truncate">{ws.name}</span>
                   </div>
 
-                  <span>
-                    <Settings
-                      className="h-6 w-6 shrink-0 text-gray-400 hover:scale-105 hover:cursor-pointer hover:text-indigo-600"
-                      aria-hidden="true"
-                      strokeWidth={1.4}
-                    />
-                  </span>
+                  {ws.id === data.user.currentWorkspace && (
+                    <span>
+                      <Settings
+                        className="h-6 w-6 shrink-0 text-gray-400 hover:scale-105 hover:cursor-pointer hover:text-indigo-600"
+                        aria-hidden="true"
+                        strokeWidth={1.4}
+                      />
+                    </span>
+                  )}
                 </li>
               ))}
             </ul>
@@ -119,10 +134,10 @@ export default function Navbar() {
                 <AccordionTrigger className="border-y border-gray-200 hover:bg-gray-50 hover:no-underline">
                   <div className="flex items-center gap-x-4 px-6 py-1 text-sm font-semibold leading-6 text-gray-700">
                     <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-gray-200 text-sm font-medium">
-                      {user.data?.user.initials}
+                      {data?.user.initials}
                     </span>
                     <span className="sr-only">Your profile</span>
-                    <span aria-hidden="true">{user.data?.user.name}</span>
+                    <span aria-hidden="true">{data?.user.name}</span>
                   </div>
                 </AccordionTrigger>
                 <AccordionContent className="flex-col items-center space-y-3 px-6">

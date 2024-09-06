@@ -11,14 +11,12 @@ import { Navbar, PageHeader } from "@/components/blocks";
 import { Outlet } from "react-router-dom";
 import { useUser } from "@/features/users/api/useUser";
 import Spinner from "../ui/Spinner";
-import { useWorkspace } from "@/features/workspaces/api/useWorkspace";
 
 export default function DashboardLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const user = useUser();
-  const workspace = useWorkspace();
+  const { data, isPending } = useUser();
 
-  if (!user.data || !workspace.data || user.isPending || workspace.isPending) {
+  if (!data || isPending) {
     return <Spinner />;
   }
 
@@ -70,7 +68,7 @@ export default function DashboardLayout() {
           <div>
             <span className="sr-only">Your profile</span>
             <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-gray-200 text-sm font-medium">
-              {user.data.user.initials}
+              {data.user.initials}
             </span>
           </div>
         </div>

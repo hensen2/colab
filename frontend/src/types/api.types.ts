@@ -10,6 +10,7 @@ export interface IUser {
   name: string;
   workspaces: IWorkspace[];
   initials: string;
+  currentWorkspace: string;
 }
 
 export interface IProject {
@@ -51,6 +52,7 @@ export interface IAuthResponse extends IBaseResponse {
 
 export interface IUserResponse extends IBaseResponse {
   user: IUser;
+  colabToken: string;
 }
 
 export interface IWorkspaceResponse {

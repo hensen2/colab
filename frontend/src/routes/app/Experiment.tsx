@@ -8,11 +8,11 @@ import {
   HocuspocusProviderWebsocket,
 } from "@hocuspocus/provider";
 import Editor from "@/features/editor/components/Editor";
-import { useAuth } from "@/features/auth/api/useAuth";
+import { useUser } from "@/features/users/api/useUser";
 
 export const ExperimentPage = () => {
   const { state: experiment }: { state: IExperiment } = useLocation();
-  const { data } = useAuth();
+  const { data } = useUser();
 
   const [websocketProvider, setWebsocketProvider] =
     useState<HocuspocusProviderWebsocket | null>(null);
@@ -31,9 +31,9 @@ export const ExperimentPage = () => {
     return new HocuspocusProvider({
       websocketProvider,
       name: `experiment.protocol.${experiment.id}`,
-      token: data?.accessToken,
+      token: data?.colabToken,
     });
-  }, [experiment.id, websocketProvider, data?.accessToken]);
+  }, [experiment.id, websocketProvider, data?.colabToken]);
 
   const notesProvider = useMemo(() => {
     if (!websocketProvider) return;
@@ -41,9 +41,9 @@ export const ExperimentPage = () => {
     return new HocuspocusProvider({
       websocketProvider,
       name: `experiment.notes.${experiment.id}`,
-      token: data?.accessToken,
+      token: data?.colabToken,
     });
-  }, [experiment.id, websocketProvider, data?.accessToken]);
+  }, [experiment.id, websocketProvider, data?.colabToken]);
 
   return (
     <>
