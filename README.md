@@ -17,3 +17,5 @@
 9. Start the app by running "npm run dev"
 10. Navigate in your browser to http://localhost:5173/
 11. Enter login credentials listed above to test
+
+Make sure ports 8080, 8081, and 5173 are open to run this app.
