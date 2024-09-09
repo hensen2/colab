@@ -4,12 +4,15 @@ import Collaboration from "@tiptap/extension-collaboration";
 import CollaborationCursor from "@tiptap/extension-collaboration-cursor";
 import type { HocuspocusProvider } from "@hocuspocus/provider";
 import Extensions from "./Extensions";
+import { useUserWorkspace } from "@/features/userWorkspaces/api/useUserWorkspace";
 
 interface IEditorProps {
   provider: HocuspocusProvider;
 }
 
 const Editor = ({ provider }: IEditorProps) => {
+  const { data } = useUserWorkspace();
+
   const editor = useEditor({
     extensions: [
       ...Extensions,
@@ -18,7 +21,7 @@ const Editor = ({ provider }: IEditorProps) => {
       }),
       CollaborationCursor.configure({
         provider,
-        user: { name: "Matthew Hensen", color: "#ffcc00" },
+        user: { name: `${data?.user.name}`, color: "#ffcc00" },
       }),
     ],
     shouldRerenderOnTransaction: false,
@@ -29,8 +32,6 @@ const Editor = ({ provider }: IEditorProps) => {
       },
     },
   });
-
-  console.log(editor?.getJSON());
 
   return (
     <div className="relative flex h-full flex-1 flex-col overflow-hidden rounded-lg border-[2.5px] border-indigo-600 bg-white text-gray-700 shadow-md">

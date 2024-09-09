@@ -1,6 +1,7 @@
 import express from "express";
 import authRouter, { accessSchema } from "./auth";
 import userRouter from "./users";
+import workspaceRouter from "./workspaces";
 import projectRouter from "./projects";
 import protocolRouter from "./protocols";
 import experimentRouter from "./experiments";
@@ -23,6 +24,7 @@ apiRouter.use(
 
 // Private routes accessed after auth router guards
 apiRouter.use("/users", userRouter);
+apiRouter.use("/workspaces", workspaceRouter);
 apiRouter.use("/projects", projectRouter);
 apiRouter.use("/protocols", protocolRouter);
 apiRouter.use("/experiments", experimentRouter);
